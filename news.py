@@ -2,7 +2,7 @@ import feedparser, json, requests, re, os
 from datetime import datetime, timezone, timedelta
 from bs4 import BeautifulSoup
 from PIL import Image
-from io import BytesIO
+from io import BytesIO 
 
 # --- TERA NAAM ---
 REPORTER_NAME = "Gaurav Sharma"
