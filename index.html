@@ -1,13 +1,50 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>4th Pillar News</title>
-<style>body{margin:0;font-family:Arial;background:#f2f2f2}.top{background:#b30000;padding:10px 15px;display:flex;align-items:center;gap:10px}.top img{height:36px;width:36px;border-radius:50%;background:#fff}.top a{color:#fff;text-decoration:none;font-weight:bold;font-size:19px}.grid{max-width:800px;margin:auto;padding:10px;display:grid;gap:12px}.card{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 5px #0002}.card img{width:100%;height:200px;object-fit:cover}.card.t{padding:10px;font-weight:bold;font-size:17px;color:#222}.card.m{padding:0 10px 10px;color:#666;font-size:13px}</style></head>
+<style>body{margin:0;font-family:Arial;background:#f2f2f2}.top{background:#b30000;padding:10px 15px;display:flex;align-items:center;gap:10px}.top img{height:36px;width:36px;border-radius:50%;background:#fff}.top a{color:#fff;text-decoration:none;font-weight:bold;font-size:19px}.grid{max-width:800px;margin:auto;padding:10px;display:grid;gap:12px}.card{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 5px #0002}.card img{width:100%;height:200px;object-fit:cover}.card.t{padding:10px;font-weight:bold;font-size:17px;color:#222}.card.m{padding:0 10px 10px;color:#666;font-size:13px}
+#pagination{text-align:center;padding:20px 10px;max-width:800px;margin:auto;display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+#pagination button{background:#fff;border:1px solid #ccc;padding:8px 14px;border-radius:20px;font-weight:bold;cursor:pointer}
+#pagination button.active{background:#b30000;color:#fff;border-color:#b30000}
+</style></head>
 <body>
 <div class="top"><img src="logo.png" onerror="this.src='https://via.placeholder.com/36'"><a href="index.html">4th Pillar News</a></div>
 <div class="grid" id="g"></div>
+<div id="pagination"></div>
 <script>
+let allNews = [];
+let currentPage = 1;
+const perPage = 12;
+
 fetch('news.json?v='+Date.now()).then(r=>r.json()).then(list=>{
- document.getElementById('g').innerHTML=list.map(n=>`
-  <a href="${n.link}" style="text-decoration:none"><div class="card"><img src="${n.image}"><div class="t">${n.title}</div><div class="m">By ${n.reporter} | ${n.date}</div></div></a>
- `).join('');
+ allNews = list;
+ showPage(1);
 });
+
+function showPage(page){
+ currentPage = page;
+ const start = (page-1)*perPage;
+ const end = start + perPage;
+ const pageNews = allNews.slice(start, end);
+
+ document.getElementById('g').innerHTML = pageNews.map(n=>`
+  <a href="${n.link}" style="text-decoration:none"><div class="card"><img src="${n.image}" loading="lazy"><div class="t">${n.title}</div><div class="m">By ${n.reporter} | ${n.date}</div></div></a>
+ `).join('');
+
+ // Pagination buttons
+ let totalPages = Math.ceil(allNews.length / perPage);
+ let btnHTML = '';
+ if(page > 1) btnHTML += `<button onclick="showPage(${page-1})">Prev</button>`;
+ 
+ for(let i=1; i<=totalPages; i++){
+   // Zyada pages hone par sirf aas paas ke dikhao
+   if(i==1 || i==totalPages || (i>=page-2 && i<=page+2)){
+     btnHTML += `<button class="${i==page?'active':''}" onclick="showPage(${i})">${i}</button>`;
+   } else if(i==page-3 || i==page+3){
+     btnHTML += `<span style="padding:8px">...</span>`;
+   }
+ }
+ if(page < totalPages) btnHTML += `<button onclick="showPage(${page+1})">Next</button>`;
+
+ document.getElementById('pagination').innerHTML = btnHTML;
+ window.scrollTo({top:0, behavior:'smooth'});
+}
 </script></body></html>
