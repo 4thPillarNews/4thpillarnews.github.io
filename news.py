@@ -1,5 +1,5 @@
 import feedparser, json, requests, re, os
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from bs4 import BeautifulSoup
 from PIL import Image
 from io import BytesIO
@@ -64,12 +64,15 @@ if os.path.exists("news.json"):
     except: old_news=[]
 
 old_titles={n['title'].strip().lower() for n in old_news}
-today=datetime.now().strftime("%d %b %Y") # Ab se 13 Sep 2026 ayega
+
+# --- DATE FIX - AB IST SE 13 Sep AYEGA ---
+ist = timezone(timedelta(hours=5, minutes=30))
+today = datetime.now(ist).strftime("%d %b %Y")
+
 feed=feedparser.parse("https://feeds.bbci.co.uk/hindi/rss.xml")
 new_items=[]
 
 for entry in feed.entries[:10]:
-    # puri news lo
     img,p1,p2=full_news(entry.link, len(old_news)+len(new_items))
     if len(p1)<100: continue
     title=entry.title
@@ -81,7 +84,7 @@ for entry in feed.entries[:10]:
     new_items.append({
         "title":title, "para1":p1, "para2":p2, "para3":"", "para4":"",
         "image":img, "category":"Latest", "date":today,
-        "reporter":REPORTER_NAME, "source":"4th Pillar News"
+        "reporter": REPORTER_NAME, "source":"4th Pillar News"
     })
 
 # Nayi sabse upar, purani next page pe shift
@@ -95,4 +98,4 @@ final_news=final_news[:500]
 
 with open('news.json','w',encoding='utf-8') as f:
     json.dump(final_news,f,ensure_ascii=False,indent=2)
-print(f"Added {len(new_items)} new, Total {len(final_news)}")
+print(f"Added {len(new_items)} new, Total {len(final_news)} | Date {today}")
