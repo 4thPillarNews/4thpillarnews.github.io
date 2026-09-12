@@ -1,50 +1,24 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Login</title>
-<style>
-body{background:#000;color:#fff;font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}
-#loginBox{background:#222;padding:20px;border-radius:10px;width:90%;max-width:320px;text-align:center}
-input{width:90%;padding:10px;margin:10px 0;background:#000;color:#fff;border:1px solid #555;border-radius:5px}
-button{padding:10px 20px;background:#0f0;color:#000;font-weight:bold;border:none;border-radius:5px;width:100%}
-#adminPanel{display:none;padding:10px}
-.card{background:#222;padding:12px;margin-bottom:15px;border-radius:8px;border:1px solid #333}
-textarea,input.cardIn{width:100%;padding:8px;margin:5px 0;background:#000;color:#fff;border:1px solid #444;border-radius:5px}
-</style></head><body>
-
-<div id="loginBox">
-<h3>4th Pillar Admin Login</h3>
-<input type="password" id="pass" placeholder="Password daalo">
-<button onclick="checkPass()">Login</button>
-<p style="font-size:12px;color:#888">Sirf admin login kar sakta hai</p>
-</div>
-
-<div id="adminPanel">
+<html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Admin</title>
+<style>body{font-family:Arial;background:#f4f4f4;padding:10px} .box{background:#fff;padding:15px;margin-bottom:15px;border-radius:8px} input,textarea{width:100%;padding:8px;margin:5px 0;border:1px solid #ccc;border-radius:4px;box-sizing:border-box} button{padding:12px 20px;border:none;border-radius:5px;color:#fff;cursor:pointer;width:100%;margin-top:10px;font-weight:bold} .red{background:#d32f2f} .green{background:green} .black{background:#000} img{width:100%;height:150px;object-fit:cover;border-radius:5px}</style>
+</head><body>
+<div id="login" style="max-width:400px;margin:80px auto;background:#fff;padding:30px;border-radius:10px"><h2>Admin Login</h2><input type="password" id="p" placeholder="Password"><button class="red" onclick="login()">LOGIN</button></div>
+<div id="main" style="display:none">
 <h2>Admin Panel</h2>
-<button style="background:blue;color:#fff;padding:10px;width:100%;border:none;border-radius:5px" onclick="addNews()">+ Nayi Khabar</button>
-<button style="background:green;color:#fff;padding:10px;width:100%;border:none;border-radius:5px;margin-top:5px" onclick="downloadJSON()">DOWNLOAD news.json</button>
+<button class="green" onclick="makeFinal()">STEP 1: Sare Update ke baad Yaha Click Karo</button>
+<textarea id="finalJson" rows="12" placeholder="Yaha final code ayega... COPY karna hai" style="height:250px;border:2px solid green"></textarea>
+<button class="black" onclick="copyFinal()">STEP 2: COPY KARO</button>
+<p style="background:yellow;padding:10px">COPY ke baad GitHub > news.json > Edit > Paste > Commit</p>
+<hr>
 <div id="list"></div>
 </div>
-
 <script>
-const MY_PASSWORD = "Virus@P@ssw0rd"; // <-- Yahan apna password badal sakta hai
-
-function checkPass(){
-  if(document.getElementById('pass').value === MY_PASSWORD){
-    document.getElementById('loginBox').style.display='none';
-    document.getElementById('adminPanel').style.display='block';
-    loadNews();
-  } else { alert('Galat Password!'); }
-}
-let newsData=[];
-function loadNews(){fetch('news.json').then(r=>r.json()).then(d=>{newsData=d;render();});}
-function render(){
-  let html='';newsData.forEach((n,i)=>{
-  html+=`<div class="card"><img src="${n.image}" style="width:100%;height:150px;object-fit:cover"><input class="cardIn" id="t${i}" value="${n.title.replace(/"/g,'&quot;')}"><input class="cardIn" id="img${i}" value="${n.image}"><textarea class="cardIn" id="p1${i}" rows="3">${n.para1}</textarea><button onclick="save(${i})" style="background:#0f0">Save</button><button onclick="del(${i})" style="background:#f00;color:#fff">Delete</button></div>`;
-  });document.getElementById('list').innerHTML=html;
-}
-function save(i){newsData[i].title=document.getElementById(`t${i}`).value;newsData[i].image=document.getElementById(`img${i}`).value;newsData[i].para1=document.getElementById(`p1${i}`).value;alert('Saved, ab DOWNLOAD dabao');}
-function del(i){if(confirm('Delete?')){newsData.splice(i,1);render();}}
-function addNews(){newsData.unshift({id:Date.now(),title:"Nayi Khabar",para1:"Para",para2:"",para3:"",para4:"",image:"https://picsum.photos/800",link:"article.html?id=0",category:"Latest",date:new Date().toLocaleDateString(),reporter:"Gaurav Sharma",source:"4th Pillar News"});render();}
-function downloadJSON(){let b=new Blob([JSON.stringify(newsData,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='news.json';a.click();}
-</script>
-</body></html>
+const PASS="Virus@P@ssw0rd"; // Tera naya password yaha daal de
+let allNews=[];
+function login(){ if(document.getElementById('p').value===PASS){ document.getElementById('login').style.display='none'; document.getElementById('main').style.display='block'; load(); } else alert("Wrong Password"); }
+async function load(){ let r=await fetch('news.json?v='+Date.now()); allNews=await r.json(); let h=''; allNews.forEach((n,i)=>{ h+=`<div class="box"><img src="${n.image}"><input id="t${i}" value="${n.title.replace(/"/g,'&quot;')}"><input id="img${i}" value="${n.image}"><input id="d${i}" value="${n.date}"><textarea id="p1${i}" rows="2">${n.para1}</textarea><textarea id="p2${i}" rows="2">${n.para2}</textarea><button class="red" onclick="up(${i})">UPDATE karo</button><button class="black" style="margin-top:5px;background:#555" onclick="del(${i})">DELETE</button></div>`; }); document.getElementById('list').innerHTML=h; }
+function up(i){ allNews[i].title=document.getElementById('t'+i).value; allNews[i].image=document.getElementById('img'+i).value; allNews[i].date=document.getElementById('d'+i).value; allNews[i].para1=document.getElementById('p1'+i).value; allNews[i].para2=document.getElementById('p2'+i).value; alert("Update Done! Ab upar STEP 1 dabao"); }
+function del(i){ if(confirm("Delete?")){ allNews.splice(i,1); load(); } }
+function makeFinal(){ allNews.forEach((n,idx)=>{ n.id=idx; n.link=`article.html?id=${idx}`; }); document.getElementById('finalJson').value=JSON.stringify(allNews,null,2); document.getElementById('finalJson').scrollIntoView(); }
+function copyFinal(){ let t=document.getElementById('finalJson'); t.select(); document.execCommand('copy'); alert("COPY HO GAYA! Ab GitHub me jaake paste kar de"); }
+</script></body></html>
