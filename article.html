@@ -26,15 +26,22 @@ fetch('news.json?v=' + Date.now())
 .then(r => r.json())
 .then(list => {
   let n = list.find(x => x.id == id) || list[0];
+
+  // SAFI KARA - agar para me dusri khabar ghusi hai to kaat dega
+  function clean(t){
+    if(!t) return "";
+    return t.split("4th Pillar")[0].split("अगली खबर")[0].split("NEXT NEWS")[0].substring(0,1000).trim();
+  }
+
   document.getElementById('newsBox').innerHTML = `
     <h1>${n.title}</h1>
     <div class="byline">By Gaurav Sharma | 4th Pillar News</div>
     <div class="meta">${n.date} | ${n.category}</div>
     <img src="${n.image}">
-    <p>${n.para1}</p>
-    <p>${n.para2}</p>
-    <p>${n.para3}</p>
-    <p>${n.para4}</p>
+    <p>${clean(n.para1)}</p>
+    <p>${clean(n.para2)}</p>
+    ${n.para3? `<p>${clean(n.para3)}</p>` : ""}
+    ${n.para4? `<p>${clean(n.para4)}</p>` : ""}
   `;
 });
 </script>
