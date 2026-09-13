@@ -1,1 +1,37 @@
 
+<!DOCTYPE html>
+<html><body>
+<h3>Fixing...</h3>
+<pre id="out"></pre>
+<script>
+fetch('news.json?v='+Date.now()).then(r=>r.json()).then(list=>{
+ let titles = list.map(x=>x.title.substring(0,20));
+ let fixed = list.map(n=>{
+   function clean(p){
+     if(!p) return "";
+     // Agar para me 200 se zyada words hain aur dusri news ka title hai to uske pehle kaat do
+     for(let t of titles){
+       if(p.includes(t) && p.indexOf(t) > 50){
+         p = p.substring(0, p.indexOf(t));
+       }
+     }
+     return p.trim();
+   }
+   return {
+     id: n.id,
+     title: n.title,
+     date: n.date,
+     category: n.category,
+     image: n.image,
+     para1: clean(n.para1),
+     para2: clean(n.para2),
+     para3: clean(n.para3 || ""),
+     para4: clean(n.para4 || ""),
+     link: `article.html?id=${n.id}`
+   };
+ });
+ document.getElementById('out').innerText = JSON.stringify(fixed,null,2);
+ console.log("Done", fixed.length);
+});
+</script>
+</body></html>
