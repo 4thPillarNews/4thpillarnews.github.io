@@ -3,48 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>News - The 4th Pillar News</title>
+<title>News</title>
 <style>
-body{font-family: sans-serif; margin:0; background:#f5f5f5}
-.header{background:#0a1e3c; color:white; padding:12px; text-align:center}
-.container{max-width:700px; margin:auto; background:white; padding:15px; margin-top:10px}
-img{width:100%; height:auto; border-radius:8px}
-h1{font-size:22px; line-height:1.4}
-.meta{color:#b91c1c; font-weight:bold; font-size:14px}
-.content{font-size:17px; line-height:1.7; margin-top:15px}
-a.back{display:inline-block; margin:15px; background:#0a1e3c; color:white; padding:8px 15px; border-radius:20px; text-decoration:none}
+body{margin:0;font-family:sans-serif;background:#f2f2f2}
+.header{background:#0a1e3c;color:white;padding:15px;text-align:center}
+.box{background:white;margin:15px;padding:15px;border-radius:8px}
+.box img{width:100%;border-radius:8px}
 </style>
 </head>
 <body>
-<div class="header"><b>The 4th Pillar News</b></div>
-<a class="back" href="index.html">← Back</a>
-<div class="container" id="newsBox">Loading...</div>
-
+<div class="header"><a href="index.html" style="color:white;text-decoration:none">← Back</a> The 4th Pillar News</div>
+<div class="box" id="content">Loading...</div>
 <script>
 async function load(){
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
-  if(!id){ document.getElementById('newsBox').innerHTML="ID nahi mila"; return; }
-  try{
-    const res = await fetch('news.json?v='+Date.now());
-    const data = await res.json();
-    const n = data.find(x=> x.id == id);
-    if(!n){ document.getElementById('newsBox').innerHTML="Khabar nahi mili"; return; }
-    document.getElementById('newsBox').innerHTML = `
-      <div class="meta">${n.category} | ${n.date}</div>
-      <h1>${n.title}</h1>
-      <p><b>By ${n.author || 'Gaurav Sharma'}</b></p>
-      <img src="${n.image}">
-      <div class="content">
-        <p><b>${n.title}</b> - Iski poori jankari ye hai ki ${n.category} se judi ye khabar aaj sabse zyada charcha me hai. Prashasan ne is par sangyan liya hai.</p>
-        <p>Ghaziabad aur desh-duniya ki sabse tez khabar ke liye The 4th Pillar News par bane rahein. Is khabar ko WhatsApp par share zarur karein.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ye sample detail hai jo har news ke liye auto generate ho rahi hai. Aage se isme real description aayega.</p>
-      </div>
-    `;
-    document.title = n.title;
-  }catch(e){
-    document.getElementById('newsBox').innerHTML = "Error: "+e.message;
-  }
+  let r = await fetch('news.json?v='+Date.now());
+  let data = await r.json();
+  let n = data.find(x=>x.id==id);
+  if(!n){ document.getElementById('content').innerHTML="News not found"; return; }
+  document.getElementById('content').innerHTML = `<h2>${n.title}</h2><p style="color:#b91c1c">${n.category} | ${n.date} | ${n.author}</p><img src="${n.image}"><p style="margin-top:15px;line-height:1.6">${n.title} से जुड़ी पूरी जानकारी। गाजियाबाद और देश-दुनिया की ताजा खबरों के लिए The 4th Pillar News पढ़ते रहें।<br><br>यह खबर हमारे ऑटो सिस्टम द्वारा अपडेट की गई है।</p>`;
+  document.title = n.title;
 }
 load();
 </script>
