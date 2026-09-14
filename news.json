@@ -1,114 +1,42 @@
 [
   {
-    "id": "1",
-    "title": "Ghaziabad me Indirapuram road par naya flyover banega - 14 Sep 07:30 PM",
+    "id": "1726300000",
+    "title": "गाजियाबाद में इंदिरापुरम रोड पर नए फ्लाईओवर का निर्माण शुरू",
     "category": "Ghaziabad",
-    "image": "https://images.unsplash.com/photo-1570129477492-45c003edd2be",
-    "date": "14 Sep 2026 07:30 PM",
+    "image": "https://images.unsplash.com/photo-1545558014-8692077e9b5c",
+    "date": "14 Sep 2026 05:00 PM",
     "author": "Gaurav Sharma"
   },
   {
-    "id": "2",
-    "title": "Sansad me aaj naya bill pass hua, vipaksh ne kiya virodh",
+    "id": "1726299400",
+    "title": "संसद में आज किसानों के लिए नया विधेयक पारित हुआ",
     "category": "National",
-    "image": "https://images.unsplash.com/photo-1524492412937-b28074a5d7da",
-    "date": "14 Sep 2026 06:30 PM",
+    "image": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620",
+    "date": "14 Sep 2026 05:00 PM",
     "author": "Gaurav Sharma"
   },
   {
-    "id": "3",
-    "title": "Team India ne T20 match me Pakistan ko haraya",
+    "id": "1726298800",
+    "title": "भारतीय क्रिकेट टीम ने टी-20 मुकाबले में शानदार जीत हासिल की",
     "category": "Sports",
-    "image": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211",
-    "date": "14 Sep 2026 05:30 PM",
+    "image": "https://images.unsplash.com/photo-1531415074968-036ba1b575da",
+    "date": "14 Sep 2026 05:00 PM",
     "author": "Gaurav Sharma"
   },
   {
-    "id": "4",
-    "title": "Share market me tezi, Sensex 800 ank upar",
+    "id": "1726298200",
+    "title": "सोने और चांदी के दाम में आज भारी गिरावट दर्ज की गई",
     "category": "Business",
     "image": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3",
-    "date": "14 Sep 2026 04:30 PM",
+    "date": "14 Sep 2026 05:00 PM",
     "author": "Gaurav Sharma"
   },
   {
-    "id": "5",
-    "title": "Shah Rukh Khan ki nayi film ka trailer release hua",
+    "id": "1726297600",
+    "title": "बॉलीवुड की नई फिल्म ने पहले दिन 100 करोड़ की कमाई की",
     "category": "Entertainment",
     "image": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba",
-    "date": "14 Sep 2026 03:30 PM",
-    "author": "Gaurav Sharma"
-  },
-  {
-    "id": "6",
-    "title": "America me toofan se bhari tabahi",
-    "category": "International",
-    "image": "https://images.unsplash.com/photo-1521295121783-8a321d551ad2",
-    "date": "14 Sep 2026 02:30 PM",
-    "author": "Gaurav Sharma"
-  },
-  {
-    "id": "7",
-    "title": "Ghaziabad Nagar Nigam ne safai abhiyan shuru kiya",
-    "category": "Ghaziabad",
-    "image": "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b",
-    "date": "14 Sep 2026 01:30 PM",
-    "author": "Gaurav Sharma"
-  },
-  {
-    "id": "1789404840",
-    "title": "Ghaziabad me aaj subah bhari barish 16:54",
-    "category": "National",
-    "image": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3",
-    "date": "14 Sep 2026 04:54 PM",
-    "author": "Gaurav Sharma"
-  },
-  {
-    "id": "1789405089",
-    "title": "Nayi film ka trailer release 16:58",
-    "category": "Sports",
-    "image": "https://images.unsplash.com/photo-1524492412937-b28074a5d7da",
-    "date": "14 Sep 2026 04:58 PM",
-    "author": "Gaurav Sharma"
-  },
-  {
-    "id": "1789406070",
-    "title": "Nayi film ka trailer release 17:14",
-    "category": "Business",
-    "image": "https://images.unsplash.com/photo-1524492412937-b28074a5d7da",
-    "date": "14 Sep 2026 05:14 PM",
-    "author": "Gaurav Sharma"
-  },
-  {
-    "id": "1789406982",
-    "title": "Nayi film ka trailer release 17:29",
-    "category": "National",
-    "image": "https://images.unsplash.com/photo-1524492412937-b28074a5d7da",
-    "date": "14 Sep 2026 05:29 PM",
-    "author": "Gaurav Sharma"
-  },
-  {
-    "id": "1789407894",
-    "title": "गाजियाबाद नगर निगम ने स्वच्छता अभियान शुरू किया",
-    "category": "Ghaziabad",
-    "image": "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b",
-    "date": "14 Sep 2026 05:44 PM",
-    "author": "Gaurav Sharma"
-  },
-  {
-    "id": "1789408635",
-    "title": "संसद में आज नया विधेयक पारित हुआ",
-    "category": "National",
-    "image": "https://images.unsplash.com/photo-1524492412937-b28074a5d7da",
-    "date": "14 Sep 2026 05:57 PM",
-    "author": "Gaurav Sharma"
-  },
-  {
-    "id": "1789409252",
-    "title": "संयुक्त राष्ट्र में भारत ने अपना पक्ष रखा",
-    "category": "International",
-    "image": "https://images.unsplash.com/photo-1521295121783-8a321d551ad2",
-    "date": "14 Sep 2026 06:07 PM",
+    "date": "14 Sep 2026 05:00 PM",
     "author": "Gaurav Sharma"
   }
 ]
