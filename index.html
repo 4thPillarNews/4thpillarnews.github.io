@@ -1,44 +1,52 @@
-let allNews = [];
-let currentPage = 1;
-const perPage = 10;
-
-async function loadNews(){
-  const res = await fetch('news.json?v='+Date.now());
-  allNews = await res.json();
-  allNews.reverse(); // nayi khabar upar
-  showPage(1);
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 4th Pillar News - Ghaziabad</title>
+<style>
+body{margin:0;font-family:sans-serif;background:#f2f2f2}
+.header{background:#0a1e3c;color:white;padding:15px;text-align:center;font-size:20px;font-weight:bold}
+.news-card{background:white;margin:10px;padding:10px;border-radius:8px;display:flex;gap:10px}
+.news-card img{width:100px;height:70px;object-fit:cover;border-radius:5px}
+.news-card h3{margin:0;font-size:16px;line-height:1.3;color:#000}
+.news-card p{margin:5px 0 0;color:#b91c1c;font-size:12px}
+.news-card a{text-decoration:none;color:black;display:flex;gap:10px;width:100%}
+#pagination{text-align:center;padding:20px}
+#pagination button{padding:8px 12px;margin:3px;border:1px solid #ccc;border-radius:5px;cursor:pointer}
+#pagination button.active{background:#0a1e3c;color:white}
+</style>
+</head>
+<body>
+<div class="header">The 4th Pillar News</div>
+<div id="newsList">Loading news...</div>
+<div id="pagination"></div>
+<script>
+let allNews=[]; let cur=1; const perPage=10;
+async function load(){
+  let r=await fetch('news.json?v='+Date.now());
+  allNews=await r.json();
+  allNews.reverse();
+  show(1);
 }
-
-function showPage(page){
-  currentPage = page;
-  const start = (page-1)*perPage;
-  const end = start + perPage;
-  const pageNews = allNews.slice(start, end);
-  
-  // yahan apna news dikhane wala code likh
-  // example: document.getElementById('newsList').innerHTML = ...
-  let html = "";
-  pageNews.forEach(n=>{
-    html += `
-      <div class="news-card">
-        <a href="article.html?id=${n.id}">
-          <img src="${n.image}">
-          <h3>${n.title}</h3>
-          <p>${n.category} | ${n.date}</p>
-        </a>
-      </div>
-    `;
+function show(p){
+  cur=p;
+  let start=(p-1)*perPage, end=start+perPage;
+  let list=allNews.slice(start,end);
+  let h="";
+  list.forEach(n=>{
+    h+=`<div class="news-card"><a href="article.html?id=${n.id}"><img src="${n.image}"><div><h3>${n.title}</h3><p>${n.category} | ${n.date}</p></div></a></div>`;
   });
-  document.getElementById('newsList').innerHTML = html;
-
-  // Pagination buttons
-  let totalPages = Math.ceil(allNews.length / perPage);
-  let pagHtml = "";
-  for(let i=1; i<=totalPages; i++){
-    pagHtml += `<button onclick="showPage(${i})" style="${i==page?'background:#0a1e3c;color:white':''}">${i}</button> `;
+  document.getElementById('newsList').innerHTML=h;
+  let total=Math.ceil(allNews.length/perPage);
+  let pg="";
+  for(let i=1;i<=total;i++){
+    pg+=`<button class="${i==p?'active':''}" onclick="show(${i})">${i}</button>`;
   }
-  document.getElementById('pagination').innerHTML = pagHtml;
+  document.getElementById('pagination').innerHTML=pg;
   window.scrollTo(0,0);
 }
-
-loadNews();
+load();
+</script>
+</body>
+</html>
