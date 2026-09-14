@@ -1,99 +1,101 @@
 <!DOCTYPE html>
 <html lang="hi">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The 4th Pillar News - Sach Ka Chautha Stambh</title>
-<!-- ADSENSE - apna code yahan lagana -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The 4th Pillar News | Gaurav Sharma</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui;background:#f4f6f9}
-.header{background:#0b2047;display:flex;align-items:center;gap:12px;padding:10px 16px;position:sticky;top:0;z-index:99}
-.header img{width:50px;height:50px;border-radius:12px;background:#fff;object-fit:cover}
-.header h1{color:#fff;font-size:19px;line-height:1.1}.header h1 span{color:#f2c14e;font-size:12px;display:block;font-weight:600}
-.filter{display:flex;gap:8px;overflow:auto;padding:10px 12px;background:#fff;border-bottom:1px solid #ddd}
-.filter button{border:1px solid #0b2047;background:#fff;color:#0b2047;padding:6px 14px;border-radius:20px;white-space:nowrap;font-weight:700}
-.filter button.active{background:#0b2047;color:#fff}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;padding:14px}
-.card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.08)}
-.card img{width:100%;height:180px;object-fit:cover}
-.c{padding:12px}.c small{color:#b71c1c;font-weight:700}.c h3{font-size:17px;margin:6px 0;line-height:1.3}
-.c a{display:inline-block;margin-top:6px;color:#0b2047;font-weight:800;text-decoration:none}
-.page{display:flex;justify-content:center;gap:8px;padding:16px;flex-wrap:wrap}
-.page button{padding:8px 14px;border:1px solid #0b2047;border-radius:8px;background:#fff;font-weight:700}
-.page button.active{background:#0b2047;color:#fff}
-.ad-box{background:#fff;border:1px dashed #999;margin:14px;text-align:center;padding:20px;border-radius:10px;color:#666}
+body{font-family:system-ui;margin:0;background:#f1f2f6}
+.top-bar{background:#0b1f4d;color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:99}
+.top-bar img{width:44px;height:44px;border-radius:10px}
+.top-bar b{font-size:16px;line-height:1.2}
+.top-bar small{color:#ffcc00;display:block;font-size:12px}
+.cats{overflow-x:auto;white-space:nowrap;padding:10px;display:flex;gap:8px;background:#fff;border-bottom:1px solid #ddd}
+.cats button{border:1.5px solid #0b1f4d;padding:7px 16px;border-radius:20px;background:#fff;font-weight:700}
+.cats button.active{background:#0b1f4d;color:#fff}
+.card{margin:12px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.card img{width:100%;height:200px;object-fit:cover}
+.card-body{padding:12px}
+.meta{color:#b00020;font-size:13px;font-weight:600}
+.card-body h3{margin:6px 0;font-size:18px}
+.btns{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.btns a{color:#0b1f4d;font-weight:800;text-decoration:none;font-size:16px}
+.wa{color:#fff!important;background:#25D366;padding:7px 14px;border-radius:20px;font-size:13px!important}
+.ad-box{margin:12px;text-align:center}
 </style>
+<!-- AdSense - ID approve hone ke baad yahan ad ayega, nahi to box gayab -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX" crossorigin="anonymous"></script>
 </head>
 <body>
-<div class="header">
-<img src="logo.png" onerror="this.src='4thpillar24x7.jpg'">
-<h1>The 4th Pillar News<span>Sach Ka Chautha Stambh | Gaurav Sharma</span></h1>
-</div>
-<div class="filter" id="filter">
-<button class="active" onclick="showCat('All',this)">All</button>
-<button onclick="showCat('Ghaziabad',this)">Ghaziabad</button>
-<button onclick="showCat('National',this)">National</button>
-<button onclick="showCat('International',this)">International</button>
-<button onclick="showCat('Sports',this)">Sports</button>
-<button onclick="showCat('Entertainment',this)">Entertainment</button>
-<button onclick="showCat('Business',this)">Business</button>
-<button onclick="showCat('Technology',this)">Technology</button>
+
+<div class="top-bar">
+<img src="logo.png"><div><b>The 4th Pillar News</b><small>Sach Ka Chautha Stambh | Gaurav Sharma</small></div>
 </div>
 
-<!-- ADSENSE TOP -->
-<div class="ad-box">AdSense Top - yahan ad ayega</div>
+<div class="cats" id="cats">
+<button class="active" onclick="filterCat('All')">All</button>
+<button onclick="filterCat('Ghaziabad')">Ghaziabad</button>
+<button onclick="filterCat('National')">National</button>
+<button onclick="filterCat('International')">International</button>
+<button onclick="filterCat('Sports')">Sports</button>
+<button onclick="filterCat('Entertainment')">Entertainment</button>
+<button onclick="filterCat('Business')">Business</button>
+</div>
 
-<div id="grid" class="grid"></div>
+<!-- TOP AD - Ad na ho to ye div khali rahega, dikhega nahi -->
+<div class="ad-box">
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXX" data-ad-slot="1111111111" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 
-<!-- ADSENSE MIDDLE -->
-<div class="ad-box">AdSense Middle - har 10 news ke baad</div>
+<div id="newsList"></div>
 
-<div id="pagination" class="page"></div>
+<div class="ad-box">
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXX" data-ad-slot="2222222222" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 
-<!-- ADSENSE BOTTOM -->
-<div class="ad-box">AdSense Bottom</div>
+<div style="text-align:center;padding:20px" id="pages"></div>
 
 <script>
-let allNews=[], filtered=[], currentPage=1;
-const perPage = 10;
-const MAX_NEWS = 500;
-
+let allNews=[],filtered=[],perPage=10,curPage=1,curCat='All';
 fetch('./news.json?v='+Date.now()).then(r=>r.json()).then(d=>{
-  // 500 se zyada ho to sabse purani delete
-  if(d.length > MAX_NEWS){
-    d = d.slice(-MAX_NEWS);
-  }
-  allNews = d.slice().reverse(); // latest pehle
-  filtered = allNews;
-  renderPage(1);
+ allNews=d.reverse();
+ filtered=allNews;
+ render(1);
 });
 
-function renderPage(p){
-  currentPage=p;
-  let start=(p-1)*perPage, end=start+perPage;
-  let list=filtered.slice(start,end);
-  let h='';
-  list.forEach(n=>{
-    h+=`<div class="card"><img src="${n.image}"><div class="c"><small>${n.category} | ${n.date}</small><h3>${n.title}</h3><a href="article.html?id=${n.id}">पढ़ें →</a></div></div>`;
-  });
-  document.getElementById('grid').innerHTML=h;
-  renderPagination();
+function filterCat(c){
+ curCat=c;
+ document.querySelectorAll('.cats button').forEach(b=>b.classList.remove('active'));
+ event.target.classList.add('active');
+ if(c==='All') filtered=allNews;
+ else filtered=allNews.filter(n=>n.category===c);
+ render(1);
 }
-
-function renderPagination(){
-  let total=Math.ceil(filtered.length/perPage);
-  let h='';
-  for(let i=1;i<=total;i++){
-    h+=`<button class="${i===currentPage?'active':''}" onclick="renderPage(${i})">${i}</button>`;
-  }
-  document.getElementById('pagination').innerHTML=h;
-}
-
-function showCat(cat,el){
-  document.querySelectorAll('.filter button').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  if(cat==='All') filtered=allNews;
-  else filtered=allNews.filter(x=>x.category===cat);
-  renderPage(1);
+function render(p){
+ curPage=p;
+ let s=(p-1)*perPage;
+ let data=filtered.slice(s,s+perPage);
+ let html='';
+ data.forEach(n=>{
+  let url=location.origin+`/article.html?id=${n.id}`;
+  let wa=`https://wa.me/?text=${encodeURIComponent(n.title+' | The 4th Pillar News - Gaurav Sharma '+url)}`;
+  html+=`<div class="card">
+  <a href="article.html?id=${n.id}"><img src="${n.image}"></a>
+  <div class="card-body">
+  <div class="meta">${n.category} | ${n.date}</div>
+  <h3>${n.title}</h3>
+  <div class="btns">
+  <a href="article.html?id=${n.id}">पढ़ें →</a>
+  <a class="wa" href="${wa}" target="_blank">WhatsApp Share</a>
+  </div></div></div>`;
+ });
+ document.getElementById('newsList').innerHTML=html||'<p style="text-align:center">Is category me news nahi hai</p>';
+ let tp=Math.ceil(filtered.length/perPage);
+ let pg='';
+ for(let i=1;i<=tp;i++){ pg+=`<button onclick="render(${i})" style="margin:4px;padding:10px 16px;border-radius:10px;border:none;background:${i===p?'#0b1f4d':'#fff'};color:${i===p?'#fff':'#000'};font-weight:700">${i}</button>`; if(i>=50) break;}
+ document.getElementById('pages').innerHTML=pg;
 }
 </script>
 </body>
