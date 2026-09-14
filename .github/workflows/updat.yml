@@ -1,27 +1,36 @@
-name: Auto Update Every 2 Min
+name: Auto Update Every 5 Min
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '*/5 * * * *'
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   update-news:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
           
       - name: Run Update
-        run: python news.py
-        
-      - name: Commit
+        run: |
+          pip install feedparser requests || true
+          python news.py
+          
+      - name: Commit and Push
         run: |
           git config --global user.name "Gaurav Sharma"
           git config --global user.email "gaurav@4thpillarnews.com"
-          git add news.json
-          git commit -m "Auto Update $(date)" || echo "No change"
-          git push
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto Update $(date)"
+            git push
+          fi
