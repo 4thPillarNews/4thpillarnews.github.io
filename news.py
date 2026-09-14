@@ -22,7 +22,6 @@ NEWS_POOL = [
 ]
 
 cat, title, img = random.choice(NEWS_POOL)
-
 data.append({
     "id": str(int(datetime.now().timestamp())),
     "title": title,
@@ -32,8 +31,8 @@ data.append({
     "author": "Gaurav Sharma"
 })
 
-if len(data) > 200:
-    data = data[-200:]
+if len(data) > 500:
+    data = data[-500:]
 
 with open("news.json","w",encoding="utf-8") as f:
     json.dump(data,f,ensure_ascii=False,indent=2)
