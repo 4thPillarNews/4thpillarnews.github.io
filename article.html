@@ -1,14 +1,52 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>News - The 4th Pillar News</title>
+<style>
+body{font-family: sans-serif; margin:0; background:#f5f5f5}
+.header{background:#0a1e3c; color:white; padding:12px; text-align:center}
+.container{max-width:700px; margin:auto; background:white; padding:15px; margin-top:10px}
+img{width:100%; height:auto; border-radius:8px}
+h1{font-size:22px; line-height:1.4}
+.meta{color:#b91c1c; font-weight:bold; font-size:14px}
+.content{font-size:17px; line-height:1.7; margin-top:15px}
+a.back{display:inline-block; margin:15px; background:#0a1e3c; color:white; padding:8px 15px; border-radius:20px; text-decoration:none}
+</style>
+</head>
+<body>
+<div class="header"><b>The 4th Pillar News</b></div>
+<a class="back" href="index.html">← Back</a>
+<div class="container" id="newsBox">Loading...</div>
 
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>News</title><style>body{font-family:system-ui;margin:0}.top{background:#0b2047;color:#fff;padding:12px;display:flex;justify-content:space-between;position:sticky;top:0}.wrap{max-width:780px;margin:auto;padding:16px}h1{font-size:24px}p{font-size:17px;line-height:1.8;margin-bottom:12px}</style>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX" crossorigin="anonymous"></script>
-</head><body>
-<div class="top"><b>The 4th Pillar News | Gaurav Sharma</b><a href="index.html" style="color:#0b2047;background:#fff;padding:6px 12px;border-radius:20px;text-decoration:none;font-weight:700">Home</a></div>
-<div class="wrap" id="box">Loading...</div>
 <script>
-const id=new URLSearchParams(location.search).get('id');
-fetch('./news.json?v='+Date.now()).then(r=>r.json()).then(data=>{
- const n=data.find(x=>String(x.id)===String(id));
- let paras=[n.para1,n.para2,n.para3,n.para4,n.para5,n.para6].filter(p=>p&&p.trim()!="").map(p=>`<p>${p}</p>`).join('');
- document.getElementById('box').innerHTML=`<h1>${n.title}</h1><small>${n.category} | ${n.date} | By ${n.author}</small><img src="${n.image}" style="width:100%;border-radius:12px;margin:12px 0">${paras}`;
-});
-</script></body></html>
+async function load(){
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if(!id){ document.getElementById('newsBox').innerHTML="ID nahi mila"; return; }
+  try{
+    const res = await fetch('news.json?v='+Date.now());
+    const data = await res.json();
+    const n = data.find(x=> x.id == id);
+    if(!n){ document.getElementById('newsBox').innerHTML="Khabar nahi mili"; return; }
+    document.getElementById('newsBox').innerHTML = `
+      <div class="meta">${n.category} | ${n.date}</div>
+      <h1>${n.title}</h1>
+      <p><b>By ${n.author || 'Gaurav Sharma'}</b></p>
+      <img src="${n.image}">
+      <div class="content">
+        <p><b>${n.title}</b> - Iski poori jankari ye hai ki ${n.category} se judi ye khabar aaj sabse zyada charcha me hai. Prashasan ne is par sangyan liya hai.</p>
+        <p>Ghaziabad aur desh-duniya ki sabse tez khabar ke liye The 4th Pillar News par bane rahein. Is khabar ko WhatsApp par share zarur karein.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ye sample detail hai jo har news ke liye auto generate ho rahi hai. Aage se isme real description aayega.</p>
+      </div>
+    `;
+    document.title = n.title;
+  }catch(e){
+    document.getElementById('newsBox').innerHTML = "Error: "+e.message;
+  }
+}
+load();
+</script>
+</body>
+</html>
