@@ -7,82 +7,70 @@
 <style>
 body{font-family:system-ui;margin:0;background:#f1f2f6}
 .top-bar{background:#0b1f4d;color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:99}
-.top-bar img{width:44px;height:44px;border-radius:10px}
+.top-bar img{width:44px;height:44px;border-radius:10px;background:#fff}
 .top-bar b{font-size:16px;line-height:1.2}
 .top-bar small{color:#ffcc00;display:block;font-size:12px}
-.cats{overflow-x:auto;white-space:nowrap;padding:10px;display:flex;gap:8px;background:#fff;border-bottom:1px solid #ddd}
-.cats button{border:1.5px solid #0b1f4d;padding:7px 16px;border-radius:20px;background:#fff;font-weight:700}
+.cats{overflow-x:auto;white-space:nowrap;padding:10px;display:flex;gap:8px;background:#fff;border-bottom:1px solid #ddd;position:sticky;top:64px;z-index:98}
+.cats button{border:1.5px solid #0b1f4d;padding:7px 16px;border-radius:20px;background:#fff;font-weight:700;flex-shrink:0}
 .cats button.active{background:#0b1f4d;color:#fff}
 .card{margin:12px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1)}
 .card img{width:100%;height:200px;object-fit:cover}
 .card-body{padding:12px}
 .meta{color:#b00020;font-size:13px;font-weight:600}
-.card-body h3{margin:6px 0;font-size:18px}
-.btns{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.card-body h3{margin:6px 0;font-size:18px;line-height:1.3}
+.btns{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
 .btns a{color:#0b1f4d;font-weight:800;text-decoration:none;font-size:16px}
-.wa{color:#fff!important;background:#25D366;padding:7px 14px;border-radius:20px;font-size:13px!important}
-.ad-box{margin:12px;text-align:center}
+.wa{color:#fff!important;background:#25D366;padding:8px 14px;border-radius:20px;font-size:13px!important}
 </style>
-<!-- AdSense - ID approve hone ke baad yahan ad ayega, nahi to box gayab -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX" crossorigin="anonymous"></script>
 </head>
 <body>
 
 <div class="top-bar">
-<img src="logo.png"><div><b>The 4th Pillar News</b><small>Sach Ka Chautha Stambh | Gaurav Sharma</small></div>
+<img src="logo.png" onerror="this.src='https://via.placeholder.com/44'">
+<div><b>The 4th Pillar News</b><small>Sach Ka Chautha Stambh | Gaurav Sharma</small></div>
 </div>
 
 <div class="cats" id="cats">
-<button class="active" onclick="filterCat('All')">All</button>
-<button onclick="filterCat('Ghaziabad')">Ghaziabad</button>
-<button onclick="filterCat('National')">National</button>
-<button onclick="filterCat('International')">International</button>
-<button onclick="filterCat('Sports')">Sports</button>
-<button onclick="filterCat('Entertainment')">Entertainment</button>
-<button onclick="filterCat('Business')">Business</button>
+<button class="active" onclick="filterCat('All',this)">All</button>
+<button onclick="filterCat('Ghaziabad',this)">Ghaziabad</button>
+<button onclick="filterCat('National',this)">National</button>
+<button onclick="filterCat('International',this)">International</button>
+<button onclick="filterCat('Sports',this)">Sports</button>
+<button onclick="filterCat('Entertainment',this)">Entertainment</button>
+<button onclick="filterCat('Business',this)">Business</button>
 </div>
 
-<!-- TOP AD - Ad na ho to ye div khali rahega, dikhega nahi -->
-<div class="ad-box">
-<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXX" data-ad-slot="1111111111" data-ad-format="auto" data-full-width-responsive="true"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
-
-<div id="newsList"></div>
-
-<div class="ad-box">
-<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXX" data-ad-slot="2222222222" data-ad-format="auto" data-full-width-responsive="true"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
+<div id="newsList" style="padding-bottom:20px"><p style="text-align:center;padding:40px">News Load ho rahi hai...</p></div>
 
 <div style="text-align:center;padding:20px" id="pages"></div>
 
 <script>
-let allNews=[],filtered=[],perPage=10,curPage=1,curCat='All';
-fetch('./news.json?v='+Date.now()).then(r=>r.json()).then(d=>{
+let allNews=[],filtered=[],perPage=10,curCat='All';
+fetch('./news.json?v='+Date.now())
+.then(r=>r.json())
+.then(d=>{
  allNews=d.reverse();
  filtered=allNews;
  render(1);
-});
+}).catch(()=>{document.getElementById('newsList').innerHTML='<p style="text-align:center">news.json nahi mila. pehle news.py chalao.</p>'});
 
-function filterCat(c){
+function filterCat(c,btn){
  curCat=c;
  document.querySelectorAll('.cats button').forEach(b=>b.classList.remove('active'));
- event.target.classList.add('active');
+ btn.classList.add('active');
  if(c==='All') filtered=allNews;
  else filtered=allNews.filter(n=>n.category===c);
  render(1);
 }
 function render(p){
- curPage=p;
  let s=(p-1)*perPage;
  let data=filtered.slice(s,s+perPage);
  let html='';
  data.forEach(n=>{
   let url=location.origin+`/article.html?id=${n.id}`;
-  let wa=`https://wa.me/?text=${encodeURIComponent(n.title+' | The 4th Pillar News - Gaurav Sharma '+url)}`;
+  let wa=`https://wa.me/?text=${encodeURIComponent(n.title+' | The 4th Pillar News - '+url)}`;
   html+=`<div class="card">
-  <a href="article.html?id=${n.id}"><img src="${n.image}"></a>
+  <a href="article.html?id=${n.id}"><img src="${n.image}" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c'"></a>
   <div class="card-body">
   <div class="meta">${n.category} | ${n.date}</div>
   <h3>${n.title}</h3>
@@ -91,11 +79,12 @@ function render(p){
   <a class="wa" href="${wa}" target="_blank">WhatsApp Share</a>
   </div></div></div>`;
  });
- document.getElementById('newsList').innerHTML=html||'<p style="text-align:center">Is category me news nahi hai</p>';
+ document.getElementById('newsList').innerHTML=html||'<p style="text-align:center">Is category me koi news nahi</p>';
  let tp=Math.ceil(filtered.length/perPage);
  let pg='';
- for(let i=1;i<=tp;i++){ pg+=`<button onclick="render(${i})" style="margin:4px;padding:10px 16px;border-radius:10px;border:none;background:${i===p?'#0b1f4d':'#fff'};color:${i===p?'#fff':'#000'};font-weight:700">${i}</button>`; if(i>=50) break;}
+ for(let i=1;i<=tp;i++){ pg+=`<button onclick="render(${i})" style="margin:4px;padding:10px 16px;border-radius:10px;border:none;background:${i===p?'#0b1f4d':'#fff'};color:${i===p?'#fff':'#000'};font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.2)">${i}</button>`; if(i>=50) break;}
  document.getElementById('pages').innerHTML=pg;
+ window.scrollTo(0,0);
 }
 </script>
 </body>
