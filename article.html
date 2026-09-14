@@ -1,1 +1,14 @@
 
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>News</title><style>body{font-family:system-ui;margin:0}.top{background:#0b2047;color:#fff;padding:12px;display:flex;justify-content:space-between;position:sticky;top:0}.wrap{max-width:780px;margin:auto;padding:16px}h1{font-size:24px}p{font-size:17px;line-height:1.8;margin-bottom:12px}</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX" crossorigin="anonymous"></script>
+</head><body>
+<div class="top"><b>The 4th Pillar News | Gaurav Sharma</b><a href="index.html" style="color:#0b2047;background:#fff;padding:6px 12px;border-radius:20px;text-decoration:none;font-weight:700">Home</a></div>
+<div class="wrap" id="box">Loading...</div>
+<script>
+const id=new URLSearchParams(location.search).get('id');
+fetch('./news.json?v='+Date.now()).then(r=>r.json()).then(data=>{
+ const n=data.find(x=>String(x.id)===String(id));
+ let paras=[n.para1,n.para2,n.para3,n.para4,n.para5,n.para6].filter(p=>p&&p.trim()!="").map(p=>`<p>${p}</p>`).join('');
+ document.getElementById('box').innerHTML=`<h1>${n.title}</h1><small>${n.category} | ${n.date} | By ${n.author}</small><img src="${n.image}" style="width:100%;border-radius:12px;margin:12px 0">${paras}`;
+});
+</script></body></html>
