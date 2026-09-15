@@ -4,6 +4,12 @@ from datetime import datetime, timedelta
 API_KEY = os.getenv("GNEWS_API_KEY")
 categories = ["nation", "world", "sports", "entertainment", "business", "general"]
 
+hindi_months = {
+    "January":"जनवरी", "February":"फरवरी", "March":"मार्च", "April":"अप्रैल",
+    "May":"मई", "June":"जून", "July":"जुलाई", "August":"अगस्त",
+    "September":"सितंबर", "October":"अक्टूबर", "November":"नवंबर", "December":"दिसंबर"
+}
+
 try:
     with open("news.json", "r", encoding="utf-8") as f:
         old_news = json.load(f)
@@ -14,35 +20,42 @@ old_urls = {n.get("url") for n in old_news}
 fresh = []
 
 for cat in categories:
-    url = f"https://gnews.io/api/v4/top-headlines?category={cat}&lang=hi&country=in&max=5&apikey={API_KEY}"
+    url = f"https://gnews.io/api/v4/top-headlines?category={cat}&lang=hi&country=in&max=10&apikey={API_KEY}"
     try:
         data = requests.get(url).json()
         for a in data.get("articles", []):
             if a["url"] not in old_urls:
-                # Time ko Hindi IST me convert
-                utc_time = datetime.fromisoformat(a["publishedAt"].replace("Z", "+00:00"))
-                ist_time = utc_time + timedelta(hours=5, minutes=30)
-                hindi_time = ist_time.strftime("%d %B %Y, %I:%M %p")
-                # Hindi months
-                hindi_time = hindi_time.replace("September","सितंबर").replace("January","जनवरी").replace("February","फरवरी").replace("March","मार्च").replace("April","अप्रैल").replace("May","मई").replace("June","जून").replace("July","जुलाई").replace("August","अगस्त").replace("October","अक्टूबर").replace("November","नवंबर").replace("December","दिसंबर")
+                # Time fix - IST Hindi
+                try:
+                    utc = datetime.fromisoformat(a["publishedAt"].replace("Z", "+00:00"))
+                    ist = utc + timedelta(hours=5, minutes=30)
+                    eng_month = ist.strftime("%B")
+                    hin_month = hindi_months.get(eng_month, eng_month)
+                    hindi_time = ist.strftime(f"%d {hin_month} %Y, %I:%M %p")
+                except:
+                    hindi_time = a.get("publishedAt","")
 
-                # Re-written - copy paste nahi
-                rewritten_desc = f"{a['title']} के बारे में बड़ी खबर। {a['description'][:150]}... पूरी जानकारी के लिए पढ़ें।"
+                # News content fix - kabhi khali na rahe
+                desc = a.get("description") or a.get("content") or a.get("title") or ""
+                if len(desc) < 20:
+                    desc = a.get("title","")
+                
+                # Re-written in Hindi style
+                rewritten = f"{a['title']} को लेकर बड़ी अपडेट सामने आई है। {desc[:300]} यह खबर देश-दुनिया से जुड़ी अहम जानकारी दे रही है। अधिक जानकारी के लिए पूरी खबर पढ़ें।"
 
                 fresh.append({
                     "title": a["title"],
-                    "description": rewritten_desc,
-                    "original_description": a["description"],
+                    "description": rewritten,
                     "image": a.get("image"),
                     "url": a["url"],
                     "publishedAt": hindi_time,
-                    "actualTime": a["publishedAt"],
                     "author": "Gaurav Sharma",
                     "category": cat,
                     "source": a["source"]["name"]
                 })
                 old_urls.add(a["url"])
-    except:
+    except Exception as e:
+        print(f"Error in {cat}: {e}")
         continue
 
 final_list = fresh + old_news
