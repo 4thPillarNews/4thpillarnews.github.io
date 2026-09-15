@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -7,12 +7,15 @@
 <style>
 body{font-family:system-ui;margin:0;background:#f5f5f5}
 header{background:#111;color:#fff;padding:12px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
-header img{height:40px;width:auto;background:#fff;padding:4px;border-radius:6px}
+header img{height:40px;background:#fff;padding:4px;border-radius:6px}
 #news{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;padding:20px}
 .card{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1)}
 .card img{width:100%;height:180px;object-fit:cover;background:#ddd}
 .card .p{padding:12px}
 .card h3{margin:0 0 8px;font-size:16px}
+.btn{background:#111;color:#fff;border:0;padding:8px 12px;border-radius:6px;margin-top:8px;cursor:pointer}
+#pop{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+#pop .box{background:#fff;padding:20px;border-radius:12px;max-width:500px;width:100%}
 </style>
 </head>
 <body>
@@ -21,25 +24,19 @@ header img{height:40px;width:auto;background:#fff;padding:4px;border-radius:6px}
 <h1 style="font-size:20px;margin:0">4th Pillar News</h1>
 </header>
 
-<div id="news">Loading news...</div>
+<div id="news">Khabar load ho rahi hai...</div>
 
 <script>
+let allNews=[];
 fetch('./news.json?v='+Date.now())
 .then(r=>r.json())
 .then(data=>{
+ allNews=data;
  const c=document.getElementById('news');
- if(!data || !data.length){ c.innerHTML='<p style=padding:20px>No news, wait 3 hours for auto update.</p>'; return; }
- c.innerHTML=data.map(n=>`
+ if(!data || !data.length){ c.innerHTML='<p style=padding:20px>Khabar nahi hai, 3 ghante me auto ayegi.</p>'; return; }
+ c.innerHTML=data.map((n,i)=>`
   <div class="card">
    <img src="${n.image||'./logo.png'}" onerror="this.src='./logo.png'">
    <div class="p">
     <h3>${n.title||''}</h3>
-    <p>${(n.description||'').slice(0,110)}...</p>
-    <button onclick="alert('${n.title}')">Puri khabar padho</button>
-   </div>
-  </div>
- `).join('');
-});
-</script>
-</body>
-</html>
+    <p>${(n
