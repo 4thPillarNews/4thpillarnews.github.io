@@ -35,7 +35,7 @@ fetch('./news.json?v='+Date.now())
    <div class="p">
     <h3>${n.title||''}</h3>
     <p>${(n.description||'').slice(0,110)}...</p>
-    <a href="${n.url}" target="_blank">Read full</a>
+    <button onclick="alert('${n.title}')">Puri khabar padho</button>
    </div>
   </div>
  `).join('');
