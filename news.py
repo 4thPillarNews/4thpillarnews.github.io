@@ -1,54 +1,49 @@
-import requests, os, json
-from datetime import datetime, timedelta
+import requests, json, os
+from pathlib import Path
 
 API_KEY = os.getenv("GNEWS_API_KEY")
-categories = ["nation", "world", "sports", "entertainment", "business"]
-hindi_months = {"January":"जनवरी","February":"फरवरी","March":"मार्च","April":"अप्रैल","May":"मई","June":"जून","July":"जुलाई","August":"अगस्त","September":"सितंबर","October":"अक्टूबर","November":"नवंबर","December":"दिसंबर"}
+FILE = Path("news.json")
+
+old_data = []
+if FILE.exists():
+    try:
+        old_data = json.loads(FILE.read_text(encoding='utf-8'))
+    except:
+        old_data = []
+
+url = f"https://gnews.io/api/v4/top-headlines?category=general&lang=en&country=in&max=20&apikey={API_KEY}"
 
 try:
-    with open("news.json", "r", encoding="utf-8") as f:
-        old_news = json.load(f)
-except: old_news = []
+    data = requests.get(url, timeout=30).json()
+    articles = data.get("articles", [])
+    
+    if not articles:
+        print("API empty, keeping old")
+        exit(0)
 
-old_urls = {n.get("url") for n in old_news}
-fresh = []
+    # nayi news banao
+    new_news = []
+    for a in articles:
+        new_news.append({
+            "title": a.get("title"),
+            "description": a.get("description",""),
+            "image": a.get("image",""),
+            "url": a.get("url"),
+            "publishedAt": a.get("publishedAt")
+        })
 
-for cat in categories:
-    url = f"https://gnews.io/api/v4/top-headlines?category={cat}&lang=hi&country=in&max=10&apikey={API_KEY}"
-    try:
-        r = requests.get(url, timeout=20).json()
-        for a in r.get("articles", []):
-            if a["url"] in old_urls: continue
+    # purane URL ka set banao taaki duplicate na ho
+    old_urls = set([n.get("url") for n in old_data])
+    filtered_new = [n for n in new_news if n.get("url") not in old_urls]
 
-            # Time - sahi IST
-            utc = datetime.fromisoformat(a["publishedAt"].replace("Z", "+00:00"))
-            ist = utc + timedelta(hours=5, minutes=30)
-            hm = hindi_months.get(ist.strftime("%B"), ist.strftime("%B"))
-            hindi_time = ist.strftime(f"%d {hm} %Y, %H:%M") # 24hr - jaise 15 सितंबर 2026, 15:30
+    # UPAR nayi + NEECHE purani
+    final = filtered_new + old_data
+    
+    # sirf 100 tak rakho taaki file badi na ho
+    final = final[:100]
 
-            original = a.get("description") or a.get("content") or a.get("title") or ""
-            original = original.split("... [")[0].strip()
+    FILE.write_text(json.dumps(final, indent=2, ensure_ascii=False), encoding='utf-8')
+    print(f"Added {len(filtered_new)} on top, total {len(final)}")
 
-            fresh.append({
-                "title": a["title"],
-                "description": original,
-                "content": original,
-                "image": a.get("image"),
-                "url": a["url"],
-                "publishedAt": hindi_time,
-                "author": "Gaurav Sharma",
-                "category": cat,
-                "source": a["source"]["name"]
-            })
-            old_urls.add(a["url"])
-    except Exception as e:
-        print(e)
-        continue
-
-final_list = fresh + old_news
-final_list = final_list[:500]
-
-with open("news.json", "w", encoding="utf-8") as f:
-    json.dump(final_list, f, ensure_ascii=False, indent=2)
-
-print(f"Added: {len(fresh)}, Total: {len(final_list)}")
+except Exception as e:
+    print(f"Error {e}")
