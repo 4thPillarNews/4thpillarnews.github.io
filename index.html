@@ -7,8 +7,8 @@
 <style>
 body{margin:0;font-family:sans-serif;background:#f2f2f2}
 .header{background:#0a1e3c;color:white;padding:15px;text-align:center;font-size:20px;font-weight:bold}
-.news-card{background:white;margin:10px;padding:10px;border-radius:8px;display:flex;gap:10px}
-.news-card img{width:100px;height:70px;object-fit:cover;border-radius:5px}
+.news-card{background:white;margin:10px;padding:12px;border-radius:8px;display:flex;gap:10px}
+.news-card img{width:100px;height:70px;object-fit:cover;border-radius:5px;background:#ddd}
 .news-card h3{margin:0;font-size:16px;line-height:1.3;color:#000}
 .news-card p{margin:5px 0 0;color:#b91c1c;font-size:12px}
 .news-card a{text-decoration:none;color:black;display:flex;gap:10px;width:100%}
@@ -19,16 +19,31 @@ body{margin:0;font-family:sans-serif;background:#f2f2f2}
 </head>
 <body>
 <div class="header">The 4th Pillar News</div>
-<div id="newsList">Loading news...</div>
+<div id="newsList" style="padding:20px;text-align:center">Loading news...</div>
 <div id="pagination"></div>
 <script>
-let allNews=[]; let cur=1; const perPage=10;
+let allNews=[], cur=1, perPage=10;
 async function load(){
-  let r=await fetch('news.json?v='+Date.now());
-  allNews=await r.json();
-  if(!Array.isArray(allNews)) allNews = Object.values(allNews).flat();
-  allNews.reverse();
-  show(1);
+  try{
+    let r=await fetch('news.json?v='+Date.now());
+    let data=await r.json();
+    console.log(data);
+    // data chahe array ho, ya object {category: []} ho, dono handle
+    if(Array.isArray(data)){
+      allNews=data;
+    } else if(typeof data === 'object'){
+      allNews=[];
+      for(let k in data){ if(Array.isArray(data[k])) allNews=allNews.concat(data[k]); }
+    }
+    if(allNews.length==0){
+      document.getElementById('newsList').innerHTML="news.json khali hai - Run workflow dobara karo";
+      return;
+    }
+    allNews.reverse();
+    show(1);
+  }catch(e){
+    document.getElementById('newsList').innerHTML="Error: "+e.message+"<br>news.json nahi mil rahi";
+  }
 }
 function show(p){
   cur=p;
@@ -36,17 +51,18 @@ function show(p){
   let list=allNews.slice(start,end);
   let h="";
   list.forEach(n=>{
-    let time = n.publishedAt || n.pubDate || '';
-    h+=`<div class="news-card"><a href="article.html?id=${n.id}"><img src="${n.image}" onerror="this.src='https://via.placeholder.com/100x70'"><div><h3>${n.title}</h3><p>${n.category} | ${time}</p></div></a></div>`;
+    let time = n.publishedAt || n.pubDate || n.date || new Date().toLocaleString('en-IN');
+    let title = n.title || 'No Title';
+    let img = n.image || 'https://via.placeholder.com/100x70';
+    let cat = n.category || 'General';
+    let id = n.id || Math.random();
+    h+=`<div class="news-card"><a href="article.html?id=${id}"><img src="${img}" onerror="this.src='https://via.placeholder.com/100x70'"><div><h3>${title}</h3><p>${cat} | ${time}</p></div></a></div>`;
   });
   document.getElementById('newsList').innerHTML=h;
   let total=Math.ceil(allNews.length/perPage);
   let pg="";
-  for(let i=1;i<=total;i++){
-    pg+=`<button class="${i==p?'active':''}" onclick="show(${i})">${i}</button>`;
-  }
+  for(let i=1;i<=total;i++) pg+=`<button class="${i==p?'active':''}" onclick="show(${i})">${i}</button>`;
   document.getElementById('pagination').innerHTML=pg;
-  window.scrollTo(0,0);
 }
 load();
 </script>
