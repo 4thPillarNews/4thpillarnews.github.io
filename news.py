@@ -11,7 +11,8 @@ if FILE.exists():
     except:
         old_data = []
 
-url = f"https://gnews.io/api/v4/top-headlines?category=general&lang=en&country=in&max=20&apikey={API_KEY}"
+# YE LINE TERE CODE ME MISSING THI - AB HINDI WALI LAGAYI HAI
+url = f"https://gnews.io/api/v4/top-headlines?category=general&lang=hi&country=in&max=20&apikey={API_KEY}"
 
 try:
     data = requests.get(url, timeout=30).json()
@@ -21,7 +22,6 @@ try:
         print("API empty, keeping old")
         exit(0)
 
-    # nayi news banao
     new_news = []
     for a in articles:
         new_news.append({
@@ -32,14 +32,10 @@ try:
             "publishedAt": a.get("publishedAt")
         })
 
-    # purane URL ka set banao taaki duplicate na ho
-    old_urls = set([n.get("url") for n in old_data])
+    old_urls = set([n.get("url") for n in old_data if n.get("url")])
     filtered_new = [n for n in new_news if n.get("url") not in old_urls]
 
-    # UPAR nayi + NEECHE purani
     final = filtered_new + old_data
-    
-    # sirf 100 tak rakho taaki file badi na ho
     final = final[:100]
 
     FILE.write_text(json.dumps(final, indent=2, ensure_ascii=False), encoding='utf-8')
