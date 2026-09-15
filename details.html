@@ -1,1 +1,41 @@
-
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>News Detail</title>
+<style>
+body{margin:0;font-family:system-ui;background:#fff}
+.header{background:#0a1e3c;color:white;padding:12px;text-align:center;position:sticky;top:0}
+.header a{color:white;text-decoration:none;font-weight:bold}
+.container{max-width:700px;margin:0 auto;padding:16px}
+h1{font-size:22px;line-height:1.5}
+.meta{color:#b91c1c;font-size:13px;margin:10px 0;border-bottom:1px solid #eee;padding-bottom:10px}
+img{width:100%;border-radius:8px;max-height:420px;object-fit:cover;background:#eee}
+.content{font-size:17px;line-height:1.9;margin-top:15px;color:#222}
+</style>
+</head>
+<body>
+<div class="header"><a href="index.html">← Back to 4th Pillar News</a></div>
+<div class="container" id="detail">Loading...</div>
+<script>
+async function loadDetail(){
+  let id=new URLSearchParams(window.location.search).get('id');
+  let r=await fetch('news.json?v='+Date.now());
+  let data=await r.json();
+  let allNews=Array.isArray(data)?data:[];
+  let n=allNews.find(x=>x.id==id);
+  if(!n){document.getElementById('detail').innerHTML='Khabar nahi mili';return;}
+  document.title=n.title;
+  document.getElementById('detail').innerHTML=`
+    <h1>${n.title}</h1>
+    <div class="meta">${n.category} | ${n.publishedAt} | By ${n.author}</div>
+    <img src="${n.image}" onerror="this.src='./logo.png'">
+    <div class="content">${n.content}</div>
+    <p style="font-size:12px;color:#666;margin-top:20px">Source: <a href="${n.url}" target="_blank" rel="nofollow">${n.source}</a></p>
+  `;
+}
+loadDetail();
+</script>
+</body>
+</html>
