@@ -1,29 +1,23 @@
 name: Auto News Update
-
 on:
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      - name: Install requests
-        run: pip install requests
-      - name: Generate news
-        env:
+      - run: pip install requests
+      - env:
           GNEWS_API_KEY: ${{ secrets.GNEWS_API_KEY }}
         run: python news.py
-      - name: Commit news
-        run: |
+      - run: |
           git config --global user.name "4thPillarNews"
           git config --global user.email "news@4thpillar.com"
-          git add news.json
-          git commit -m "auto update - Gaurav Sharma" || exit 0
-          git push
+          git add news.json || true
+          git diff --staged --quiet || git commit -m "auto update"
+          git push || true
