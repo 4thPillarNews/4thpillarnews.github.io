@@ -2,13 +2,9 @@ import requests, os, json
 from datetime import datetime, timedelta
 
 API_KEY = os.getenv("GNEWS_API_KEY")
-categories = ["nation", "world", "sports", "entertainment", "business", "general"]
+categories = ["nation", "world", "sports", "entertainment", "business"]
 
-hindi_months = {
-    "January":"जनवरी", "February":"फरवरी", "March":"मार्च", "April":"अप्रैल",
-    "May":"मई", "June":"जून", "July":"जुलाई", "August":"अगस्त",
-    "September":"सितंबर", "October":"अक्टूबर", "November":"नवंबर", "December":"दिसंबर"
-}
+hindi_months = {"January":"जनवरी","February":"फरवरी","March":"मार्च","April":"अप्रैल","May":"मई","June":"जून","July":"जुलाई","August":"अगस्त","September":"सितंबर","October":"अक्टूबर","November":"नवंबर","December":"दिसंबर"}
 
 try:
     with open("news.json", "r", encoding="utf-8") as f:
@@ -24,39 +20,33 @@ for cat in categories:
     try:
         data = requests.get(url).json()
         for a in data.get("articles", []):
-            if a["url"] not in old_urls:
-                # Time fix - IST Hindi
-                try:
-                    utc = datetime.fromisoformat(a["publishedAt"].replace("Z", "+00:00"))
-                    ist = utc + timedelta(hours=5, minutes=30)
-                    eng_month = ist.strftime("%B")
-                    hin_month = hindi_months.get(eng_month, eng_month)
-                    hindi_time = ist.strftime(f"%d {hin_month} %Y, %I:%M %p")
-                except:
-                    hindi_time = a.get("publishedAt","")
+            if a["url"] in old_urls: continue
 
-                # News content fix - kabhi khali na rahe
-                desc = a.get("description") or a.get("content") or a.get("title") or ""
-                if len(desc) < 20:
-                    desc = a.get("title","")
-                
-                # Re-written in Hindi style
-                rewritten = f"{a['title']} को लेकर बड़ी अपडेट सामने आई है। {desc[:300]} यह खबर देश-दुनिया से जुड़ी अहम जानकारी दे रही है। अधिक जानकारी के लिए पूरी खबर पढ़ें।"
+            # Time fix
+            try:
+                utc = datetime.fromisoformat(a["publishedAt"].replace("Z", "+00:00"))
+                ist = utc + timedelta(hours=5, minutes=30)
+                hm = hindi_months.get(ist.strftime("%B"), ist.strftime("%B"))
+                hindi_time = ist.strftime(f"%d {hm} %Y, %I:%M %p IST")
+            except:
+                hindi_time = a["publishedAt"]
 
-                fresh.append({
-                    "title": a["title"],
-                    "description": rewritten,
-                    "image": a.get("image"),
-                    "url": a["url"],
-                    "publishedAt": hindi_time,
-                    "author": "Gaurav Sharma",
-                    "category": cat,
-                    "source": a["source"]["name"]
-                })
-                old_urls.add(a["url"])
-    except Exception as e:
-        print(f"Error in {cat}: {e}")
-        continue
+            # ORIGINAL news only - no AI
+            original_text = a.get("description") or a.get("content") or ""
+            original_text = original_text.split("... [")[0] # GNews ka cut hata diya
+
+            fresh.append({
+                "title": a["title"],
+                "description": original_text, # Yahi original hai
+                "image": a.get("image"),
+                "url": a["url"],
+                "publishedAt": hindi_time,
+                "author": "Gaurav Sharma",
+                "category": cat,
+                "source": a["source"]["name"]
+            })
+            old_urls.add(a["url"])
+    except: continue
 
 final_list = fresh + old_news
 final_list = final_list[:500]
@@ -64,4 +54,4 @@ final_list = final_list[:500]
 with open("news.json", "w", encoding="utf-8") as f:
     json.dump(final_list, f, ensure_ascii=False, indent=2)
 
-print(f"Added {len(fresh)}, Total {len(final_list)}")
+print(f"Added {len(fresh)}")
