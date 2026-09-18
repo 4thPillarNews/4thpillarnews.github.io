@@ -1,76 +1,52 @@
-import requests, json, os, hashlib, re
-from pathlib import Path
-from datetime import datetime
+from PIL import Image
+import requests
+from io import BytesIO
 
-API_KEY = os.getenv("GNEWS_API_KEY")
-FILE = Path("news.json")
+# Copyright-free image lana - Pexels/Unsplash se
+def get_free_image(title):
+    # title se keyword nikal ke copyright free image
+    keyword = title.split()[0:2] # pehle 2 shabd
+    keyword = "+".join(keyword)
+    # Unsplash source - no API key needed, copyright free
+    # Har baar same topic ki free image dega
+    return f"https://source.unsplash.com/800x450/?{keyword},india,cricket,news"
 
-old_data = []
-if FILE.exists():
+def clean_image(image_url):
     try:
-        old_data = json.loads(FILE.read_text(encoding='utf-8'))
-        if not isinstance(old_data, list): old_data=[]
-    except: old_data=[]
+        r = requests.get(image_url, timeout=10)
+        img = Image.open(BytesIO(r.content))
+        w, h = img.size
 
-def clean(t): return re.sub(r'\s+',' ',t.lower()).strip() if t else ""
-old_titles = [clean(n.get("title","")) for n in old_data]
-old_urls = set([n.get("url") for n in old_data if n.get("url")])
+        # Agar image pe logo hai (aksar top-right me hota hai - Hindustan, ABP etc)
+        # to 12% top se aur right se crop kar de
+        # aur phir wapas save kar
 
-# Saari categories jo chahiye
-CATEGORIES = {
-    "general": "Ghaziabad / Desh",
-    "world": "International",
-    "nation": "Desh",
-    "business": "Business",
-    "entertainment": "Entertainment",
-    "sports": "Sports",
-    "technology": "Technology",
-    "science": "Science"
-}
+        # Check karna hai kya image me watermark area me zyada white/red logo hai?
+        # Simple trick: top-right 20% ko crop karke hata do
+        if w > 400:
+            # logo mostly top-right me hota hai, to usko crop
+            left = 0
+            upper = int(h * 0.08) # upar se 8% hatao
+            right = int(w * 0.92) # right se 8% hatao
+            lower = h
+            img = img.crop((left, upper, right, lower))
 
-all_new = []
+        return img
+    except:
+        return None
 
-for g_cat, my_cat in CATEGORIES.items():
-    url = f"https://gnews.io/api/v4/top-headlines?category={g_cat}&lang=hi&country=in&max=10&apikey={API_KEY}"
-    try:
-        arts = requests.get(url, timeout=30).json().get("articles", [])
-        for a in arts:
-            title = a.get("title","").strip()
-            article_url = a.get("url","").strip()
-            if not title or not article_url: continue
-            if article_url in old_urls: continue
-            if clean(title) in old_titles: continue
-            if len(title) < 20: continue
+# Teri news fetch wali loop me ye use kar:
+# OLD: n["image"] = article_img
+# NEW:
 
-            img = a.get("image") or "./logo.png"
-            hid = hashlib.md5(article_url.encode()).hexdigest()[:10]
-            try:
-                dt = datetime.fromisoformat(a.get("publishedAt","").replace("Z","+00:00"))
-                pub = dt.strftime("%d %B %Y, %I:%M %p")
-            except: pub = a.get("publishedAt","")
-
-            desc = a.get("description","") or title
-            content = f"<p><b>{title}</b></p><p>{desc}</p><p>Is {my_cat} khabar se jude har update ke liye The 4th Pillar News padhte rahein.</p>"
-
-            all_new.append({
-                "id": hid,
-                "title": title,
-                "description": desc,
-                "content": content,
-                "image": img,
-                "url": article_url,
-                "publishedAt": pub,
-                "author": "Gaurav Sharma",
-                "category": my_cat,
-                "source": "The 4th Pillar News"
-            })
-            old_titles.append(clean(title))
-            old_urls.add(article_url)
-    except Exception as e:
-        print(f"Error in {g_cat}: {e}")
-        continue
-
-final = all_new + old_data
-final = final[:500]
-FILE.write_text(json.dumps(final, indent=2, ensure_ascii=False), encoding='utf-8')
-print(f"Added {len(all_new)} total. New total {len(final)}")
+if "hindustan" in article_img.lower() or "abp" in article_img.lower() or "jagran" in article_img.lower() or "bbc" in article_img.lower():
+    # dusri site ka logo hai to direct free image le lo
+    n["image"] = get_free_image(n["title"])
+else:
+    # apni image hai to crop karke logo area saaf kar do
+    cleaned = clean_image(article_img)
+    if cleaned:
+        # apne server pe save karna hai to /tmp me
+        n["image"] = article_img # ya cleaned ko upload karke uska link
+    else:
+        n["image"] = get_free_image(n["title"])
