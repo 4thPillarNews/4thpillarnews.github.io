@@ -1,41 +1,21 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>News Detail</title>
-<style>
-body{margin:0;font-family:system-ui;background:#fff}
-.header{background:#0a1e3c;color:white;padding:12px;text-align:center;position:sticky;top:0}
-.header a{color:white;text-decoration:none;font-weight:bold}
-.container{max-width:700px;margin:0 auto;padding:16px}
-h1{font-size:22px;line-height:1.5}
-.meta{color:#b91c1c;font-size:13px;margin:10px 0;border-bottom:1px solid #eee;padding-bottom:10px}
-img{width:100%;border-radius:8px;max-height:420px;object-fit:cover;background:#eee}
-.content{font-size:17px;line-height:1.9;margin-top:15px;color:#222}
-</style>
-</head>
-<body>
+<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>News Detail</title>
+<style>body{margin:0;font-family:sans-serif;background:#f5f5f5}.header{background:#0a1e3c;color:white;padding:12px;text-align:center}.header a{color:white;text-decoration:none}.container{max-width:700px;margin:0 auto;background:white;padding:15px}h1{font-size:22px}.meta{color:#b91c1c;font-size:14px;margin:10px 0;border-bottom:1px solid #eee;padding-bottom:10px}img{width:100%;border-radius:8px;max-height:400px;object-fit:cover}.content{font-size:17px;line-height:1.8;margin-top:15px}</style></head><body>
 <div class="header"><a href="index.html">← Back to 4th Pillar News</a></div>
 <div class="container" id="detail">Loading...</div>
 <script>
 async function loadDetail(){
-  let id=new URLSearchParams(window.location.search).get('id');
-  let r=await fetch('news.json?v='+Date.now());
-  let data=await r.json();
-  let allNews=Array.isArray(data)?data:[];
-  let n=allNews.find(x=>x.id==id);
-  if(!n){document.getElementById('detail').innerHTML='Khabar nahi mili';return;}
-  document.title=n.title;
-  document.getElementById('detail').innerHTML=`
-    <h1>${n.title}</h1>
-    <div class="meta">${n.category} | ${n.publishedAt} | By ${n.author}</div>
-    <img src="${n.image}" onerror="this.src='./logo.png'">
-    <div class="content">${n.content}</div>
-    <p style="font-size:12px;color:#666;margin-top:20px">Source: <a href="${n.url}" target="_blank" rel="nofollow">${n.source}</a></p>
-  `;
+ let id=new URLSearchParams(window.location.search).get('id');
+ let r=await fetch('./news.json?v='+Date.now());
+ let data=await r.json();
+ let allNews=Array.isArray(data)?data:Object.values(data).flat();
+ let n=allNews.find(x=>x.id==id);
+ if(!n){document.getElementById('detail').innerHTML='Khabar nahi mili';return;}
+ document.getElementById('detail').innerHTML=`
+  <h1>${n.title}</h1>
+  <div class="meta">${n.category} | ${n.publishedAt} | By ${n.author}</div>
+  <img src="${n.image}" onerror="this.src='./logo.png'">
+  <div class="content">${n.content}</div>
+  <br><p style="font-size:13px;color:#666">Yah khabar hamare auto system dwara ${n.publishedAt} par update ki gayi hai. Ghaziabad ki taza khabron ke liye The 4th Pillar News padhte rahein.</p>`;
 }
 loadDetail();
-</script>
-</body>
-</html>
+</script></body></html>
