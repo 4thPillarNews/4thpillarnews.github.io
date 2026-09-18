@@ -23,7 +23,7 @@ try:
         if not t or a.get("url") in old_urls: continue
         if clean(t) in old_titles: continue
         if len(t)<20: continue
-        
+
         img=a.get("image") or "./logo.png"
         hid=hashlib.md5(a.get("url","").encode()).hexdigest()[:10]
         try:
@@ -34,11 +34,12 @@ try:
         desc=a.get("description","")
         content=f"<p><b>{t}</b></p><p>{desc}</p><p>Is khabar se jude har update ke liye The 4th Pillar News padhte rahein.</p>"
 
-        new.append({"id":hid,"title":t,"description":desc,"content":content,"image":img,"url":a.get("url"),"publishedAt":pub,"author":"The 4th Pillar News Team","category":"Desh / Ghaziabad","source":a.get("source",{}).get("name","")})
+        # 4TH FINAL GAURAV RULE - Author fix aur Source hataya
+        new.append({"id":hid,"title":t,"description":desc,"content":content,"image":img,"url":a.get("url"),"publishedAt":pub,"author":"Gaurav Sharma","category":"Desh / Ghaziabad","source":"The 4th Pillar News"})
         old_titles.append(clean(t))
-    
+
     final=new+old_data
-    final=final[:100]
+    final=final[:500]  # 500 tak rakhega, delete nahi karega
     FILE.write_text(json.dumps(final,indent=2,ensure_ascii=False),encoding='utf-8')
     print(f"Added {len(new)}")
 except Exception as e:
