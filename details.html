@@ -10,7 +10,6 @@ async function loadDetail(){
  let allNews=Array.isArray(data)?data:Object.values(data).flat();
  let n=allNews.find(x=>x.id==id);
  if(!n){document.getElementById('detail').innerHTML='Khabar nahi mili';return;}
- document.getElementById('detail').title=n.title;
  document.getElementById('detail').innerHTML=`
   <h1>${n.title}</h1>
   <div class="meta">${n.category} | ${n.publishedAt} | By ${n.author}</div>
