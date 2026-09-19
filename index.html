@@ -1,42 +1,135 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The 4th Pillar News - Ghaziabad & Desh ki Taza Khabar</title>
-<meta name="description" content="Ghaziabad aur desh-duniya ki taza khabrein Hindi me">
+<title>The Fourth Pillar News - Gaurav Sharma</title>
 <style>
-body{font-family:system-ui;margin:0;background:#f5f5f5}
-header{background:#0a1e3c;color:#fff;padding:12px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
-header img{height:40px;background:#fff;padding:4px;border-radius:6px}
-#news{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;padding:20px}
-.card{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1);cursor:pointer}
-.card img{width:100%;height:180px;object-fit:cover;background:#ddd}
-.card .p{padding:12px}
-.card h3{margin:0 0 8px;font-size:16px;line-height:1.4}
-.card p{font-size:13px;color:#555;margin:0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto;background:#f5f5f7}
+.top{background:#0b2047;display:flex;align-items:center;padding:10px 14px;gap:12px;position:sticky;top:0;z-index:999;box-shadow:0 2px 10px rgba(0,0,0,.2)}
+.top img{width:52px;height:52px;border-radius:10px;background:#fff;object-fit:cover}
+.top h1{color:#fff;font-size:18px;line-height:1.1}
+.top h1 b{color:#f2c14e;font-size:11px;display:block;font-weight:600}
+.cat-bar{display:flex;gap:8px;overflow-x:auto;padding:10px 14px;background:#fff;position:sticky;top:72px;z-index:998;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.cat-bar button{white-space:nowrap;padding:7px 16px;border-radius:20px;border:1px solid #ddd;background:#fff;font-weight:700;cursor:pointer;font-size:13px}
+.cat-bar button.active{background:#0b2047;color:#fff;border-color:#0b2047}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;padding:14px}
+.card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07);transition:.2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.card img{width:100%;height:190px;object-fit:cover;background:#eee}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800;color:#fff;margin-bottom:6px}
+.c{padding:12px}
+.c h3{font-size:16px;line-height:1.35;color:#111;min-height:48px}
+.meta{font-size:11px;color:#888;margin:6px 0}
+.c a{display:inline-block;margin-top:8px;color:#b71c1c;font-weight:800;text-decoration:none;font-size:13px}
+.pager{display:flex;justify-content:center;gap:6px;padding:22px 14px;flex-wrap:wrap}
+.pager button{padding:8px 14px;border-radius:20px;border:1px solid #0b2047;background:#fff;color:#0b2047;font-weight:800;cursor:pointer;min-width:38px}
+.pager button.active{background:#0b2047;color:#fff}
+.pager button:disabled{opacity:.4}
+.info{text-align:center;padding:10px;color:#666;font-size:13px}
 </style>
 </head>
 <body>
-<header>
-<img src="./logo.png" alt="logo" onerror="this.style.display='none'">
-<h1 style="font-size:18px;margin:0">The 4th Pillar News</h1>
-</header>
-<div id="news">Khabar load ho rahi hai...</div>
+
+<div class="top">
+<img src="the4thpillarnews.jpg" onerror="this.src='https://iili.io/FxLxV5J.png'">
+<h1>The Fourth Pillar News<b>Sach Ka Chautha Stambh | Gaurav Sharma</b></h1>
+</div>
+
+<div class="cat-bar" id="catBar">
+<button class="active" onclick="filterCat('All')">All (500)</button>
+<button onclick="filterCat('NCR')">NCR</button>
+<button onclick="filterCat('National')">National</button>
+<button onclick="filterCat('International')">International</button>
+<button onclick="filterCat('Sports')">Sports</button>
+<button onclick="filterCat('Entertainment')">Entertainment</button>
+<button onclick="filterCat('Business')">Business</button>
+<button onclick="filterCat('Technology')">Technology</button>
+</div>
+
+<div class="info" id="info">Loading...</div>
+<div id="grid" class="grid"></div>
+<div id="pager" class="pager"></div>
+
 <script>
-fetch('./news.json?v='+Date.now()).then(r=>r.json()).then(data=>{
- const c=document.getElementById('news');
- if(!data || !data.length){ c.innerHTML='<p style=padding:20px>Khabar nahi hai.</p>'; return; }
- c.innerHTML=data.map(n=>`
-  <div class="card" onclick="location.href='detail.html?id=${n.id}'">
-   <img src="${n.image||'./logo.png'}" loading="lazy" onerror="this.src='./logo.png'">
-   <div class="p">
-    <h3>${n.title||''}</h3>
-    <p>${(n.description||'').slice(0,90)}...</p>
-    <p style="color:#b91c1c;font-size:11px;margin-top:6px">${n.publishedAt||''}</p>
+let allData=[], filtered=[], current=1, perPage=10, activeCat='All';
+
+const catColor = {
+ NCR: '#0b2047',
+ National: '#b71c1c',
+ International: '#0d47a1',
+ Sports: '#1b5e20',
+ Entertainment: '#6a1b9a',
+ Business: '#3e2723',
+ Technology: '#004d40'
+};
+
+fetch('./news.json?v='+Date.now()).then(r=>r.json()).then(d=>{
+ allData = d; // news.py me already new upar old niche hai
+ filtered = allData;
+ document.getElementById('info').innerText = `Total: ${allData.length} News | ${Math.ceil(allData.length/perPage)} Pages | 10 per page`;
+ render();
+});
+
+function filterCat(cat){
+ activeCat = cat;
+ document.querySelectorAll('.cat-bar button').forEach(b=>{
+   b.classList.toggle('active', b.innerText.includes(cat) || (cat==='All' && b.innerText.includes('All')));
+ });
+ if(cat==='All') filtered = allData;
+ else filtered = allData.filter(n=> (n.category||'').toLowerCase() === cat.toLowerCase());
+ current=1;
+ document.getElementById('info').innerText = `${cat} - ${filtered.length} News | Page ${current} of ${Math.ceil(filtered.length/perPage)}`;
+ render();
+}
+
+function render(){
+ let totalPages = Math.ceil(filtered.length / perPage);
+ if(totalPages>50) totalPages=50; // 500 limit
+
+ let start = (current-1)*perPage;
+ let pageData = filtered.slice(start, start+perPage);
+
+ let h='';
+ pageData.forEach(n=>{
+  let t=(n.title||'').replace(/\s*-\s*[^-]+$/,'');
+  let col = catColor[n.category] || '#0b2047';
+  let wc = n.word_count ? `${n.word_count} words | ` : '';
+  h+=`<div class="card">
+   <img src="${n.image}" loading="lazy" onerror="this.src='https://picsum.photos/seed/${n.id}/400/220'">
+   <div class="c">
+    <span class="badge" style="background:${col}">${n.category||'News'}</span>
+    <h3>${t}</h3>
+    <div class="meta">${wc}${n.date||''} | Gaurav Sharma</div>
+    <a href="news.html?id=${n.id}">पढ़ें → ${n.para1 ? n.para1.split(' ').length + n.para2.split(' ').length + n.para3.split(' ').length + ' words' : ''}</a>
    </div>
-  </div>`).join('');
-}).catch(()=>{document.getElementById('news').innerHTML='Load fail, refresh karo';});
+  </div>`;
+ });
+ document.getElementById('grid').innerHTML = h || '<p style="padding:20px;text-align:center">No news in this category</p>';
+
+ // Pager
+ let p='';
+ p+=`<button ${current===1?'disabled':''} onclick="go(${current-1})">‹ Prev</button>`;
+ for(let i=1;i<=totalPages;i++){
+   if(i===1 || i===totalPages || (i>=current-2 && i<=current+2)){
+     p+=`<button class="${i===current?'active':''}" onclick="go(${i})">${i}</button>`;
+   } else if(i===current-3 || i===current+3){
+     p+=`<span style="padding:8px">...</span>`;
+   }
+ }
+ p+=`<button ${current===totalPages?'disabled':''} onclick="go(${current+1})">Next ›</button>`;
+ document.getElementById('pager').innerHTML=p;
+ window.scrollTo({top:0,behavior:'smooth'});
+ document.getElementById('info').innerText = `${activeCat} - ${filtered.length} News | Page ${current} of ${totalPages} | Total 500 limit`;
+}
+
+function go(n){
+ let totalPages = Math.ceil(filtered.length / perPage);
+ if(n<1 || n>totalPages) return;
+ current=n;
+ render();
+}
 </script>
 </body>
 </html>
