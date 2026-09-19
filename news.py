@@ -11,21 +11,20 @@ WORDS_MIN = 400
 
 os.makedirs(IMG_DIR, exist_ok=True)
 
-# AB SE HAR CATEGORY ME 3 SOURCE - ABP AKELA NAHI
 CATEGORY_LINKS = {
-    "NCR": ["https://www.amarujala.com/delhi-ncr", "https://www.livehindustan.com/ncr/new-delhi", "https://www.jagran.com/delhi/new-delhi-city-latest-news.html"],
-    "National": ["https://www.abplive.com/news/india", "https://www.amarujala.com/india-news", "https://www.livehindustan.com/national"],
-    "International": ["https://www.bbc.com/hindi/international", "https://www.abplive.com/news/world", "https://www.amarujala.com/world-news"],
-    "Sports": ["https://www.abplive.com/sports", "https://www.amarujala.com/sports", "https://www.livehindustan.com/cricket"],
-    "Entertainment": ["https://www.abplive.com/entertainment", "https://www.amarujala.com/entertainment", "https://www.jagran.com/entertainment-latest-news.html"],
-    "Business": ["https://www.abplive.com/business", "https://www.amarujala.com/business", "https://www.livehindustan.com/business"],
-    "Technology": ["https://www.abplive.com/technology", "https://www.amarujala.com/technology", "https://www.jagran.com/technology-latest-news.html"],
-    "Education": ["https://www.amarujala.com/education", "https://www.livehindustan.com/career", "https://www.abplive.com/education"]
+    "NCR": ["https://www.amarujala.com/delhi-ncr", "https://www.livehindustan.com/ncr/new-delhi"],
+    "National": ["https://www.abplive.com/news/india", "https://www.amarujala.com/india-news"],
+    "International": ["https://www.bbc.com/hindi/international", "https://www.abplive.com/news/world"],
+    "Sports": ["https://www.abplive.com/sports", "https://www.amarujala.com/sports"],
+    "Entertainment": ["https://www.abplive.com/entertainment", "https://www.amarujala.com/entertainment"],
+    "Business": ["https://www.abplive.com/business", "https://www.amarujala.com/business"],
+    "Technology": ["https://www.abplive.com/technology", "https://www.amarujala.com/technology"],
+    "Education": ["https://www.amarujala.com/education", "https://www.livehindustan.com/career"]
 }
 
 def clean_all(text):
     if not text: return ""
-    text = re.sub(r'ABP Live|ABP News|BBC Hindi|Aaj Tak|Amar Ujala|Live Hindustan|Dainik Jagran|The Lallantop|Navbharat Times', '', text, flags=re.I)
+    text = re.sub(r'ABP Live|ABP News|BBC Hindi|Aaj Tak|Amar Ujala|Live Hindustan|Dainik Jagran', '', text, flags=re.I)
     text = re.sub(r'Is Ghaziabad.*|Desh khabar.*|The 4th Pillar.*padhte rahein.*', '', text, flags=re.I)
     text = re.sub(r'https?://\S+|www\.\S+', '', text)
     return re.sub(r'\s+', ' ', text).strip()
@@ -74,27 +73,98 @@ def get_article_links(list_url):
                     base='/'.join(list_url.split('/')[:3])
                     href=base+href
                 else: continue
-            if any(x in href for x in ['.com/', '/news/', '/india', '/world', '/sports', '/entertainment', '/business', '/technology', '/education', '/cricket', '/delhi', '/bollywood']):
-                if len(href)>50 and href not in links and 'video' not in href and 'live-tv' not in href:
+            if any(x in href for x in ['.com/', '/news/', '/india', '/world', '/sports', '/entertainment', '/business', '/technology', '/education', '/cricket', '/delhi']):
+                if len(href)>50 and href not in links and 'video' not in href:
                     links.append(href)
-            if len(links)>=12: break
+            if len(links)>=10: break
         return links
     except: return []
 
-def is_author_bio(para_text):
-    low = para_text.lower()
-    # UNIVERSAL BIO DETECTOR - kisi bhi naam ka bio katega
-    bio_keywords = [
-        "we use cookies", "personalize content", "by clicking",
-        "मैं यानी", "मैं टेक", "मेरा इंटरेस्ट", "का हिस्सा हूं", "हिस्सा हूँ", "करता हूं", "करती हूं",
-        "मेरी पकड़", "पसंद है", "जाना जाता हूं", "जाना जाता हूँ", "लिखने के लिए जाना",
-        "परास्नातक", "माखनलाल", "चतुर्वेदी", "पत्रकारिता", "विश्वविद्यालय", "उत्तीर्ण",
-        "about the author", "author bio", "holds a degree", "is a graduate", "has done his", "has done her",
-        "is currently working", "has experience", "based in", "born in", "is passionate about",
-        "इंटरेस्ट काफी ज्यादा", "डिजिटल सेक्शन", "सोशल मीडिया", "स्मार्टफोन लॉन्च"
-    ]
-    # agar para me 2 se zyada bio keyword ya "मैं" 3 baar aaye to bio hai
-    count = sum(1 for k in bio_keywords if k in low)
-    if count >= 1: return True
-    if low.count("मैं") >= 3: return True
-    if low.count("
+def is_author_bio(t):
+    low = t.lower()
+    bad = ["we use cookies", "personalize content", "by clicking", "about the author", "author bio", "holds a degree", "is a graduate", "has done his", "is currently working", "has experience", "subscribe", "follow us", "advertisement", "download app", "like us on", "facebook", "twitter"]
+    if any(b in low for b in bad):
+        return True
+    # Hindi bio check without quotes
+    if "मैं यानी" in t or "हिस्सा हूं" in t or "हिस्सा हूँ" in t or "परास्नातक" in t or "माखनलाल" in t or "चतुर्वेदी" in t or "पकड़ मजबूत" in t or "जाना जाता" in t:
+        return True
+    if t.count("मैं") >= 3:
+        return True
+    return False
+
+def extract_500_words(url):
+    headers = {"User-Agent": "Mozilla/5.0"}
+    try:
+        r = requests.get(url, timeout=20, headers=headers)
+        r.raise_for_status()
+    except: return None, None
+    soup = BeautifulSoup(r.text, 'html.parser')
+    h1 = soup.find('h1')
+    title = h1.get_text(strip=True) if h1 else (soup.title.get_text(strip=True) if soup.title else "")
+    if len(title)<15: return None, None
+    title = clean_title(title)
+
+    paras_raw=[]
+    for p in soup.find_all('p'):
+        t=p.get_text(strip=True)
+        if len(t)<60: continue
+        if is_author_bio(t): continue
+        paras_raw.append(t)
+
+    if len(paras_raw)<4: return None, None
+    paras_raw = paras_raw[:-1] if len(paras_raw)>5 else paras_raw
+    
+    full_text=" ".join(paras_raw)
+    if len(full_text.split())<WORDS_MIN: return None, None
+
+    sentences=re.split(r'(?<=[.!?।])\s+', full_text)
+    final=[]
+    curr=""
+    for s in sentences:
+        s=s.strip()
+        if not s: continue
+        if is_author_bio(s): continue
+        if len(curr.split())+len(s.split())<85:
+            curr+=" "+s
+        else:
+            if curr.strip(): final.append(f"<p>{clean_all(curr).strip()}</p>")
+            curr=s
+    if curr.strip(): final.append(f"<p>{clean_all(curr).strip()}</p>")
+    
+    final=final[:6]
+    if len(final)<3: return None, None
+    return title, "\n".join(final)
+
+all_news=[]
+if os.path.exists(JSON_PATH):
+    try:
+        with open(JSON_PATH,'r',encoding='utf-8') as f: all_news=json.load(f)
+    except: all_news=[]
+seen=set([n.get('id','') for n in all_news])
+
+for category, list_urls in CATEGORY_LINKS.items():
+    for list_url in list_urls:
+        for link in get_article_links(list_url):
+            fid=hashlib.md5(link.encode()).hexdigest()[:10]
+            if fid in seen: continue
+            title, content_html = extract_500_words(link)
+            if not title or not content_html: continue
+            img_path=f"{IMG_DIR}/{fid}.jpg"
+            create_big_image(title, img_path, category)
+            desc=re.sub(r'<[^>]+>','',content_html).split()[:32]
+            item={
+                "id":fid,"title":title,"description":" ".join(desc)+"...","content":content_html,
+                "image":img_path,"url":"#","publishedAt":datetime.now().strftime("%d %B %Y, %I:%M %p"),
+                "author":"Gaurav Sharma","category":category,"source":"The Fourth Pillar News"
+            }
+            all_news.insert(0,item)
+            seen.add(fid)
+            time.sleep(0.4)
+            if len(all_news)>=MAX_NEWS: break
+        if len(all_news)>=MAX_NEWS: break
+    if len(all_news)>=MAX_NEWS: break
+
+all_news=all_news[:MAX_NEWS]
+with open(JSON_PATH,'w',encoding='utf-8') as f:
+    json.dump(all_news,f,ensure_ascii=False,indent=2)
+print(f"DONE {len(all_news)}")
