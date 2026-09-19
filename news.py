@@ -112,9 +112,7 @@ def extract_500_600_words(url):
             continue
         article_text += txt + " "
         if len(article_text.split()) >= 620:
-            break
-    words = article_text.split()
-    if len(words) < WORDS_MIN:
-        print(f"[SKIP] {url} - Only {len(words)} words")
-        return None, None, None
-    words = words[:WORDS_MAX
+            WORDS_MAX = MAX
+words = content.split()
+words = words[:WORDS_MAX]
+content = " ".join(words)
