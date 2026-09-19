@@ -1,39 +1,44 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The 4th Pillar News - Gaurav Sharma</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The 4th Pillar News</title>
 <style>
-body{font-family:Arial;margin:0;background:#f5f5f5}
-header{background:#0b2047;color:#fff;padding:15px;text-align:center}
-header h1{margin:0}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:15px;padding:15px}
-.card{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1);cursor:pointer}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui;background:#f2f2f2}
+.top{background:#0b2047;display:flex;align-items:center;gap:12px;padding:10px 14px;position:sticky;top:0;z-index:10}
+.top img{width:48px;height:48px;border-radius:8px;background:#fff;object-fit:cover}
+.top h1{color:#fff;font-size:18px;line-height:16px}
+.top h1 b{display:block;color:#f2c14e;font-size:11px;font-weight:400}
+.grid{max-width:1100px;margin:auto;padding:12px;display:grid;gap:14px}
+@media(min-width:700px){.grid{grid-template-columns:1fr 1fr}}
+.card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.1)}
 .card img{width:100%;height:180px;object-fit:cover}
-.card.c{padding:12px}
-.cat{background:#0b2047;color:#f2c14e;font-size:11px;padding:3px 8px;border-radius:4px;display:inline-block;margin-bottom:6px}
-.card h3{margin:6px 0;font-size:16px;line-height:22px}
-.meta{font-size:12px;color:#666}
+.pad{padding:12px}
+.cat{background:#0b2047;color:#f2c14e;font-size:11px;padding:3px 8px;border-radius:20px}
+.card h3{font-size:16px;line-height:22px;margin:8px 0}
+.desc{font-size:13px;color:#444;line-height:18px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.meta{font-size:11px;color:#888;margin-top:6px}
 </style>
 </head>
 <body>
-<header><h1>The 4th Pillar News</h1><div>Gaurav Sharma | Ghaziabad / Desh</div></header>
-<div id="grid" class="grid"></div>
+<div class="top">
+<img src="the4thpillarnews.jpg" onerror="this.src='https://iili.io/FxLxV5J.png'">
+<h1>The Fourth Pillar News<b>Sach Ka Chautha Stambh | Gaurav Sharma</b></h1>
+</div>
+<div id="grid" class="grid">Loading...</div>
 <script>
-fetch('./news.json?v='+Date.now()).then(r=>r.json()).then(data=>{
- let html='';
- data.forEach(n=>{
-   html+=`<div class="card" onclick="location.href='detail.html?id=${n.id}'">
-   <img src="${n.image}" onerror="this.src='https://via.placeholder.com/400x200?text=News'">
-   <div class="c"><span class="cat">${n.category||'News'}</span>
+fetch('./news.json?'+Date.now()).then(r=>r.json()).then(data=>{
+ document.getElementById('grid').innerHTML=data.map(n=>`
+ <div class="card" onclick="location.href='detail.html?id=${n.id}'">
+  <img src="${n.image}">
+  <div class="pad">
+   <span class="cat">${n.category}</span>
    <h3>${n.title}</h3>
-   <div class="meta">${n.publishedAt||''} | ${n.author||'Gaurav Sharma'}</div>
-   </div></div>`;
- });
- document.getElementById('grid').innerHTML=html;
-}).catch(e=>{
- document.getElementById('grid').innerHTML='<h2 style="text-align:center">news.json load nahi hua: '+e+'</h2>';
+   <div class="desc">${n.description||''}</div>
+   <div class="meta">${n.publishedAt} | ${n.author}</div>
+  </div>
+ </div>`).join('');
 });
 </script>
 </body>
