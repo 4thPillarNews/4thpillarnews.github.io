@@ -1,12 +1,44 @@
-<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width">
-<style>body{margin:0;font-family:system-ui;background:#fff} .top{background:#0b2047;display:flex;align-items:center;gap:10px;padding:10px;color:#fff} .top img{width:40px;height:40px;border-radius:6px;background:#fff} .box{max-width:760px;margin:auto;padding:16px} .box img{width:100%;border-radius:10px} .box p{line-height:26px;font-size:17px;margin:14px 0}</style></head><body>
-<div class="top"><img src="the4thpillarnews.jpg" onerror="this.src='https://iili.io/FxLxV5J.png'"><b>The 4th Pillar News</b></div>
-<div class="box"><a href="index.html">← Back</a><div id="d"></div></div>
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>News - 4th Pillar</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui;background:#fff;color:#111}
+.top{background:#0b2047;display:flex;align-items:center;gap:12px;padding:10px 14px;position:sticky;top:0}
+.top img{width:48px;height:48px;border-radius:8px;background:#fff;object-fit:cover}
+.top h1{color:#fff;font-size:17px;line-height:16px}
+.top h1 b{display:block;color:#f2c14e;font-size:11px;font-weight:400;margin-top:2px}
+.box{max-width:760px;margin:auto;padding:16px}
+.back{display:inline-block;background:#0b2047;color:#fff;padding:6px 14px;border-radius:20px;text-decoration:none;margin-bottom:12px;font-size:13px}
+.box img{width:100%;border-radius:12px;margin:12px 0}
+.box h1{font-size:22px;line-height:28px;margin:10px 0}
+.meta{font-size:12px;color:#666;margin-bottom:10px}
+.box p{font-size:17px;line-height:27px;margin-bottom:14px;text-align:justify}
+</style>
+</head>
+<body>
+<div class="top">
+<img src="the4thpillarnews.jpg" onerror="this.src='https://iili.io/FxLxV5J.png'">
+<h1>The Fourth Pillar News<b>Sach Ka Chautha Stambh | Gaurav Sharma</b></h1>
+</div>
+<div class="box">
+<a class="back" href="index.html">← Back</a>
+<div id="d">Loading...</div>
+</div>
 <script>
 const id=new URLSearchParams(location.search).get('id');
-fetch('./news.json?'+Date.now()).then(r=>r.json()).then(a=>{
- let n=a.find(x=>String(x.id)==String(id))||a[0];
- let paras=n.content.replace(/<[^>]*>/g,'').split('।').filter(s=>s.trim().length>20);
- document.getElementById('d').innerHTML=`<h1>${n.title}</h1><p style="color:#666;font-size:13px">${n.publishedAt} | ${n.category} | ${n.author}</p><img src="${n.image}">${paras.map(p=>`<p>${p}।</p>`).join('')}<br><p><b>Source: ${n.source}</b></p>`;
+fetch('./news.json?'+Date.now()).then(r=>r.json()).then(arr=>{
+ let n=arr.find(x=>String(x.id)==String(id))||arr[0];
+ document.getElementById('d').innerHTML=`
+ <h1>${n.title}</h1>
+ <div class="meta">${n.publishedAt} | ${n.category} | ${n.author}</div>
+ <img src="${n.image}">
+ <div>${n.content}</div>
+ <br><p><a href="${n.url}" target="_blank">Original Source: ${n.source}</a></p>
+ `;
 });
-</script></body></html>
+</script>
+</body>
+</html>
