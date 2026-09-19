@@ -2,7 +2,7 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>News Detail - 4th Pillar</title>
+<title>News Detail</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:system-ui;background:#fff;color:#111}
@@ -25,19 +25,20 @@ body{font-family:system-ui;background:#fff;color:#111}
 </div>
 <div class="box">
 <a class="back" href="./index.html">← Back</a>
-<div id="d">Loading...</div>
+<div id="d"></div>
 </div>
 <script>
 const id=new URLSearchParams(location.search).get('id');
 fetch('./news.json?'+Date.now()).then(r=>r.json()).then(arr=>{
  let n=arr.find(x=>String(x.id)==String(id))||arr[0];
+ // Dusri site ka naam content se bhi hatao
+ let cleanContent = n.content.replace(/ABP Live|ABP News|BBC Hindi|BBC News|Amar Ujala|Navbharat Times|Aaj Tak|Dainik Jagran/gi,'').replace(/<[^>]*>/g,'\n\n');
  document.getElementById('d').innerHTML=`
  <h1>${n.title}</h1>
- <div class="meta">${n.publishedAt} | ${n.category} | ${n.author}</div>
- <img class="main" src="${n.image}" onerror="this.src='https://via.placeholder.com/400x200?text=News'">
- <div style="white-space:pre-wrap; line-height:28px; font-size:17px">${n.content.replace(/<[^>]*>/g,'\n\n')}</div>
+ <div class="meta">${n.publishedAt} | ${n.category} | By Gaurav Sharma</div>
+ <img class="main" src="${n.image}">
+ <div style="white-space:pre-wrap">${cleanContent}</div>
  <br><p><b>रिपोर्ट: Gaurav Sharma | The 4th Pillar News</b></p>
- <p><a href="${n.url}" target="_blank">Original Source</a></p>
  `;
 });
 </script>
