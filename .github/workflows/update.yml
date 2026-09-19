@@ -1,7 +1,7 @@
 name: Update News
 on:
   schedule:
-    - cron: '0 */2 * * *'
+    - cron: '0 */3 * * *'
   workflow_dispatch:
 jobs:
   build:
@@ -18,8 +18,10 @@ jobs:
       - name: Commit and push
         run: |
           git config --global user.email "bot@4thpillar.com"
-          git config --global user.name "News Bot"
-          git add news.json images/ .nojekyll -f
-          git add images/
-          git commit -m "news update 500 bank" || exit 0
+          git config --global user.name "bot"
+          touch .nojekyll
+          git add news.json || true
+          git add images/ || true
+          git add .nojekyll || true
+          git diff --staged --quiet || git commit -m "auto update news & images"
           git push
