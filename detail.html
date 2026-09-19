@@ -2,29 +2,29 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>News - 4th Pillar</title>
+<title>News Detail - 4th Pillar</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:system-ui;background:#fff;color:#111}
 .top{background:#0b2047;display:flex;align-items:center;gap:12px;padding:10px 14px;position:sticky;top:0}
-.top img{width:48px;height:48px;border-radius:8px;background:#fff;object-fit:cover}
-.top h1{color:#fff;font-size:17px;line-height:16px}
-.top h1 b{display:block;color:#f2c14e;font-size:11px;font-weight:400;margin-top:2px}
+.top img{width:48px;height:48px;border-radius:8px;background:#fff;object-fit:cover;border:2px solid #fff}
+.top h1{color:#fff;font-size:17px;line-height:15px}
+.top h1 b{display:block;color:#f2c14e;font-size:11px;font-weight:400;margin-top:3px}
 .box{max-width:760px;margin:auto;padding:16px}
 .back{display:inline-block;background:#0b2047;color:#fff;padding:6px 14px;border-radius:20px;text-decoration:none;margin-bottom:12px;font-size:13px}
-.box img{width:100%;border-radius:12px;margin:12px 0}
-.box h1{font-size:22px;line-height:28px;margin:10px 0}
+.box img.main{width:100%;border-radius:12px;margin:12px 0}
+.box h1{font-size:21px;line-height:26px;margin:10px 0}
 .meta{font-size:12px;color:#666;margin-bottom:10px}
-.box p{font-size:17px;line-height:27px;margin-bottom:14px;text-align:justify}
+.box p{font-size:17px;line-height:28px;margin-bottom:16px;text-align:justify}
 </style>
 </head>
 <body>
 <div class="top">
-<img src="the4thpillarnews.jpg" onerror="this.src='https://iili.io/FxLxV5J.png'">
+<img src="./logo.png" onerror="this.onerror=null; this.src='./the4thpillarnews.jpg'; this.onerror=function(){this.src='./4thpillar24x7.jpg'; this.onerror=function(){this.src='https://iili.io/FxLxV5J.png'}}">
 <h1>The Fourth Pillar News<b>Sach Ka Chautha Stambh | Gaurav Sharma</b></h1>
 </div>
 <div class="box">
-<a class="back" href="index.html">← Back</a>
+<a class="back" href="./index.html">← Back</a>
 <div id="d">Loading...</div>
 </div>
 <script>
@@ -34,9 +34,10 @@ fetch('./news.json?'+Date.now()).then(r=>r.json()).then(arr=>{
  document.getElementById('d').innerHTML=`
  <h1>${n.title}</h1>
  <div class="meta">${n.publishedAt} | ${n.category} | ${n.author}</div>
- <img src="${n.image}">
- <div>${n.content}</div>
- <br><p><a href="${n.url}" target="_blank">Original Source: ${n.source}</a></p>
+ <img class="main" src="${n.image}" onerror="this.src='https://via.placeholder.com/400x200?text=News'">
+ <div style="white-space:pre-wrap; line-height:28px; font-size:17px">${n.content.replace(/<[^>]*>/g,'\n\n')}</div>
+ <br><p><b>रिपोर्ट: Gaurav Sharma | The 4th Pillar News</b></p>
+ <p><a href="${n.url}" target="_blank">Original Source</a></p>
  `;
 });
 </script>
