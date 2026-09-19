@@ -19,7 +19,7 @@ jobs:
         run: |
           git config --global user.email "bot@4thpillar.com"
           git config --global user.name "News Bot"
-          git add news.json
+          git add news.json images/ .nojekyll -f
           git add images/
           git commit -m "news update 500 bank" || exit 0
           git push
