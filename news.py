@@ -1,52 +1,56 @@
-from PIL import Image
 import requests
-from io import BytesIO
+import json
+import os
+import re
+import time
+import random
+from bs4 import BeautifulSoup
+from datetime import datetime
+from PIL import Image, ImageDraw, ImageFont
+import textwrap
 
-# Copyright-free image lana - Pexels/Unsplash se
-def get_free_image(title):
-    # title se keyword nikal ke copyright free image
-    keyword = title.split()[0:2] # pehle 2 shabd
-    keyword = "+".join(keyword)
-    # Unsplash source - no API key needed, copyright free
-    # Har baar same topic ki free image dega
-    return f"https://source.unsplash.com/800x450/?{keyword},india,cricket,news"
+# ========== TERI TO-DO LIST SE CONFIG ==========
+JSON_PATH = "news.json"
+IMG_DIR = "images"
+LOGO_PATH = "the4thpillarnews.jpg"
+MAX_NEWS = 500
+WORDS_MIN = 500
+WORDS_MAX = 600
 
-def clean_image(image_url):
-    try:
-        r = requests.get(image_url, timeout=10)
-        img = Image.open(BytesIO(r.content))
-        w, h = img.size
+os.makedirs(IMG_DIR, exist_ok=True)
 
-        # Agar image pe logo hai (aksar top-right me hota hai - Hindustan, ABP etc)
-        # to 12% top se aur right se crop kar de
-        # aur phir wapas save kar
+# Category ke hisab se links - NCR, National, International, Sports, Entertainment, Business, Technology
+CATEGORY_LINKS = {
+    "NCR": [
+        "https://www.amarujala.com/delhi-ncr",
+        "https://www.jagran.com/delhi-ncr",
+    ],
+    "National": [
+        "https://www.abplive.com/news/india",
+        "https://navbharattimes.indiatimes.com/india",
+    ],
+    "International": [
+        "https://www.bbc.com/hindi/international",
+        "https://www.abplive.com/news/world",
+    ],
+    "Sports": [
+        "https://www.abplive.com/sports",
+        "https://navbharattimes.indiatimes.com/sports",
+    ],
+    "Entertainment": [
+        "https://www.abplive.com/entertainment",
+        "https://navbharattimes.indiatimes.com/entertainment",
+    ],
+    "Business": [
+        "https://www.abplive.com/business",
+        "https://navbharattimes.indiatimes.com/business",
+    ],
+    "Technology": [
+        "https://www.abplive.com/technology",
+        "https://navbharattimes.indiatimes.com/technology",
+    ]
+}
 
-        # Check karna hai kya image me watermark area me zyada white/red logo hai?
-        # Simple trick: top-right 20% ko crop karke hata do
-        if w > 400:
-            # logo mostly top-right me hota hai, to usko crop
-            left = 0
-            upper = int(h * 0.08) # upar se 8% hatao
-            right = int(w * 0.92) # right se 8% hatao
-            lower = h
-            img = img.crop((left, upper, right, lower))
-
-        return img
-    except:
-        return None
-
-# Teri news fetch wali loop me ye use kar:
-# OLD: n["image"] = article_img
-# NEW:
-
-if "hindustan" in article_img.lower() or "abp" in article_img.lower() or "jagran" in article_img.lower() or "bbc" in article_img.lower():
-    # dusri site ka logo hai to direct free image le lo
-    n["image"] = get_free_image(n["title"])
-else:
-    # apni image hai to crop karke logo area saaf kar do
-    cleaned = clean_image(article_img)
-    if cleaned:
-        # apne server pe save karna hai to /tmp me
-        n["image"] = article_img # ya cleaned ko upload karke uska link
-    else:
-        n["image"] = get_free_image(n["title"])
+def clean_source_name(title):
+    title = re.sub(r'\s*-\s*(ABP Live|ABP News|BBC Hindi|BBC News|NDTV|Navbharat Times|Aaj Tak|Amar Ujala|Dainik Jagran|Live Hindustan|The Lallantop|Jagran|ABP).*$', '', title, flags=re.I)
+    title = re.sub(r'\s*\|\s*(ABP|BBC|NDTV|NBT|Amar Ujala).*$', '', title
