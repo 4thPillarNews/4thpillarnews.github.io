@@ -28,7 +28,6 @@ CATEGORY_LINKS = {
 }
 
 def clean_source_name(title):
-    # FIXED - single line regex, no bracket error
     title = re.sub(r'\s*-\s*(ABP Live|ABP News|BBC Hindi|BBC News|NDTV|Navbharat Times|Aaj Tak|Amar Ujala|Dainik Jagran).*$', '', title, flags=re.I)
     title = re.sub(r'\s*\|\s*.*$', '', title)
     title = re.sub(r'\[.*?\]$', '', title)
@@ -58,61 +57,4 @@ def create_big_image(title, filename, category):
             logo = logo.resize((100, 100))
             img.paste(logo, (30, 30), logo if logo.mode == 'RGBA' else None)
         elif os.path.exists("4thpillar24x7.jpg"):
-            logo = Image.open("4thpillar24x7.jpg").convert("RGBA")
-            logo = logo.resize((100, 100))
-            img.paste(logo, (30, 30))
-    except:
-        pass
-
-    draw.text((160, 40), f"{category.upper()} | The Fourth Pillar", fill=(255,255,255), font=font_bold)
-    draw.text((160, 80), "Sach Ka Chautha Stambh | Gaurav Sharma", fill=(242, 193, 78), font=font_small)
-    clean_title = clean_source_name(title)
-    wrapped = textwrap.fill(clean_title, width=24)
-    draw.text((50, 200), wrapped, fill=(0, 0, 0), font=font_title)
-    draw.rectangle([50, 850, 300, 900], fill=bg_color)
-    draw.text((70, 860), category.upper(), fill=(255,255,255), font=font_cat)
-    draw.text((50, 920), datetime.now().strftime("%d %B %Y"), fill=(100,100,100), font=font_small)
-    draw.text((50, 955), "By Gaurav Sharma | 4th Pillar News", fill=(100,100,100), font=font_small)
-    img.save(filename, quality=95)
-    return filename
-
-def extract_500_600_words(url):
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
-    try:
-        r = requests.get(url, timeout=30, headers=headers)
-        r.raise_for_status()
-    except Exception as e:
-        print(f"[FAIL] {url} -> {e}")
-        return None, None, None
-    soup = BeautifulSoup(r.text, 'html.parser')
-    title = None
-    for tag in ['h1', 'title']:
-        t = soup.find(tag)
-        if t:
-            title = t.get_text(strip=True)
-            if len(title) > 15:
-                break
-    if not title:
-        return None, None, None
-    title = clean_source_name(title)
-    article_text = ""
-    main_selectors = ['article', '.article', '#article', '.story', '.content', '.news-content', '.article-body']
-    found_main = None
-    for sel in main_selectors:
-        found_main = soup.select_one(sel)
-        if found_main and len(found_main.get_text()) > 300:
-            break
-    search_area = found_main if found_main else soup
-    for p in search_area.find_all('p'):
-        txt = p.get_text(strip=True)
-        if len(txt) < 80:
-            continue
-        skip_words = ["subscribe", "follow us", "advertisement", "also read"]
-        if any(w in txt.lower() for w in skip_words):
-            continue
-        article_text += txt + " "
-        if len(article_text.split()) >= 620:
-            WORDS_MAX = MAX
-words = content.split()
-words = words[:WORDS_MAX]
-content = " ".join(words)
+           
