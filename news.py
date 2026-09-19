@@ -27,11 +27,13 @@ CATEGORY_LINKS = {
     "Technology": ["https://www.abplive.com/technology"]
 }
 
-def clean_source_name(title):
-    title = re.sub(r'\s*-\s*(ABP Live|ABP News|BBC Hindi|BBC News|NDTV|Navbharat Times|Aaj Tak|Amar Ujala|Dainik Jagran).*$', '', title, flags=re.I)
-    title = re.sub(r'\s*\|\s*.*$', '', title)
-    title = re.sub(r'\[.*?\]$', '', title)
-    return title.strip()
+def clean_source_name(text):
+    text = re.sub(r'\s*-\s*(ABP Live|ABP News|BBC Hindi|BBC News|NDTV|Navbharat Times|Aaj Tak|Amar Ujala|Dainik Jagran|The Lallantop|Live Hindustan).*$', '', text, flags=re.I)
+    text = re.sub(r'\s*\|\s*(ABP|BBC|Amar Ujala).*$', '', text, flags=re.I)
+    text = re.sub(r'(ABP Live|ABP News|BBC Hindi|BBC|Amar Ujala|NDTV|Aaj Tak)', '', text, flags=re.I)
+    text = re.sub(r'\[.*?\]', '', text)
+    text = re.sub(r'https?://\S+', '', text)
+    return text.strip()
 
 def create_big_image(title, filename, category):
     img = Image.new('RGB', (1080, 1080), color=(255, 255, 255))
