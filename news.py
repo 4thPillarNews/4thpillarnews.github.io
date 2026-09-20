@@ -51,7 +51,7 @@ def get_news_for_category(category, q):
             title = item.find("title").text
             desc = item.find("description").text if item.find("description") is not None else title
             # HTML tag hatao
-            desc = re.sub('<[^<]+?>', '', desc)[:200]
+            desc = re.sub('<[^<]+?>', '', desc)[:800]
             items.append({
                 "title": title.split(" - ")[0],
                 "desc": desc,
