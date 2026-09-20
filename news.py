@@ -1,4 +1,4 @@
-import requests, os, re, json, hashlib, time, shutil
+import requests, os, re, json, hashlib, time
 from bs4 import BeautifulSoup
 from PIL import Image, ImageDraw, ImageFont
 from urllib.parse import urljoin
@@ -6,13 +6,7 @@ from urllib.parse import urljoin
 JSON_PATH="news.json"
 IMG_DIR="images"
 FONT_PATH="NotoSansDevanagari.ttf"
-
-# --- PEHLE PURA FOLDER DELETE ---
-if os.path.exists(IMG_DIR):
-    shutil.rmtree(IMG_DIR)
 os.makedirs(IMG_DIR, exist_ok=True)
-# --- DELETE KHATAM ---
-
 HEADERS={"User-Agent":"Mozilla/5.0"}
 
 if not os.path.exists(FONT_PATH):
@@ -52,19 +46,23 @@ def get_article(link):
         return {"id":fid,"title":title,"description":txt[:120]+"...","content":f"<p>{txt}</p>","image":make_img(title,fid),"url":"#","publishedAt":time.strftime("%d %B %Y"),"author":"Gaurav Sharma","category":"National"}
     except: return None
 
-# news.json khali se start
-data=[]
-seen=set()
+try:
+    old=json.load(open(JSON_PATH,encoding='utf-8'))
+except:
+    old=[]
+seen=set([x['id'] for x in old])
+new=[]
+
 for cat in ["https://www.aajtak.in/india","https://www.aajtak.in/uttar-pradesh"]:
     try:
         html=BeautifulSoup(requests.get(cat,headers=HEADERS,timeout=20).text,'html.parser')
-        for a in html.find_all('a',href=True)[:30]:
+        for a in html.find_all('a',href=True)[:25]:
             link=urljoin(cat,a['href'])
             if "aajtak.in" not in link: continue
             art=get_article(link)
             if art and art['id'] not in seen:
-                data.append(art); seen.add(art['id'])
+                new.append(art); seen.add(art['id'])
     except: pass
 
-json.dump(data[:40],open(JSON_PATH,'w',encoding='utf-8'),ensure_ascii=False,indent=2)
-print(f"DELETED OLD & CREATED {len(data)} NEW")
+final=new+old
+json.dump(final[:40],open(JSON_PATH,'w',encoding='utf-8'),ensure_ascii=False,indent=2)
